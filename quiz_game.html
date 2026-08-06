@@ -1,0 +1,374 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>配電盤・制御盤クイズ / Trò chơi ôn thi</title>
+<style>
+  :root{
+    --pink:#ff6fa5; --purple:#7b5cff; --blue:#4fc3f7; --green:#33d17a;
+    --yellow:#ffd23f; --red:#ff5c5c; --dark:#2d2a4a;
+  }
+  *{box-sizing:border-box;}
+  body{
+    margin:0; min-height:100vh; font-family:"Yu Gothic","Hiragino Kaku Gothic ProN","Segoe UI",sans-serif;
+    background:linear-gradient(135deg,#ffe29f 0%,#ffa9c6 40%,#8ec5fc 100%);
+    background-attachment:fixed;
+    display:flex; justify-content:center; padding:24px 12px 60px;
+    color:var(--dark);
+  }
+  .app{width:100%; max-width:720px;}
+  .header{
+    text-align:center; margin-bottom:18px;
+  }
+  .header h1{
+    font-size:1.5rem; margin:0 0 4px; color:#fff;
+    text-shadow:2px 2px 0 rgba(123,92,255,.6);
+  }
+  .header p{margin:2px 0; color:#4a3f7a; font-weight:bold;}
+  .mascot{font-size:2.6rem; display:inline-block; animation:bounce 2s infinite;}
+  @keyframes bounce{0%,100%{transform:translateY(0);}50%{transform:translateY(-10px);}}
+
+  .card{
+    background:#fff; border-radius:24px; padding:22px 20px;
+    box-shadow:0 12px 30px rgba(90,60,150,.25);
+    position:relative; overflow:hidden;
+  }
+
+  /* Start screen */
+  .start-screen{text-align:center;}
+  .start-screen h2{color:var(--purple); font-size:1.3rem;}
+  .cat-grid{
+    display:grid; grid-template-columns:1fr 1fr; gap:10px; margin:16px 0;
+  }
+  .cat-btn{
+    border:none; border-radius:16px; padding:14px 8px; cursor:pointer;
+    font-weight:bold; font-size:.95rem; color:#fff; text-align:left;
+    box-shadow:0 4px 0 rgba(0,0,0,.15); transition:transform .1s;
+    line-height:1.3;
+  }
+  .cat-btn small{display:block; font-weight:normal; opacity:.9; font-size:.75rem; margin-top:2px;}
+  .cat-btn:active{transform:translateY(3px); box-shadow:0 1px 0 rgba(0,0,0,.15);}
+  .cat-btn.all{grid-column:1/-1; background:linear-gradient(90deg,var(--purple),var(--pink)); font-size:1.05rem;}
+
+  .big-start{
+    margin-top:10px; background:linear-gradient(90deg,var(--green),#22b8cf);
+    color:#fff; border:none; border-radius:20px; padding:16px 32px;
+    font-size:1.2rem; font-weight:bold; cursor:pointer;
+    box-shadow:0 6px 0 #1a8f5a;
+  }
+  .big-start:active{transform:translateY(4px); box-shadow:0 2px 0 #1a8f5a;}
+
+  /* Progress */
+  .progress-wrap{display:flex; align-items:center; gap:10px; margin-bottom:14px;}
+  .progress-bar{flex:1; height:14px; background:#eee; border-radius:8px; overflow:hidden;}
+  .progress-fill{height:100%; background:linear-gradient(90deg,var(--pink),var(--purple)); width:0%; transition:width .4s ease;}
+  .score-pill{
+    background:var(--yellow); border-radius:20px; padding:4px 12px; font-weight:bold;
+    white-space:nowrap; box-shadow:0 3px 0 #e0b400;
+  }
+  .streak{font-size:.85rem; color:#e85d04; font-weight:bold; text-align:right; min-height:18px;}
+
+  .cat-tag{
+    display:inline-block; background:var(--blue); color:#fff; font-size:.75rem;
+    padding:3px 10px; border-radius:12px; font-weight:bold; margin-bottom:10px;
+  }
+
+  .question-jp{font-size:1.15rem; font-weight:bold; line-height:1.5; margin:6px 0 4px;}
+  .question-vn{font-size:.95rem; color:#6a5acd; font-style:italic; margin-bottom:16px; line-height:1.4;}
+
+  .choices{display:flex; flex-direction:column; gap:10px;}
+  .choice-btn{
+    text-align:left; border:2px solid #e5def7; background:#faf9ff; border-radius:14px;
+    padding:12px 14px; font-size:1rem; cursor:pointer; transition:.15s;
+    display:flex; gap:10px; align-items:flex-start;
+  }
+  .choice-btn .badge{
+    flex:0 0 auto; width:26px; height:26px; border-radius:50%; background:var(--purple);
+    color:#fff; display:flex; align-items:center; justify-content:center; font-size:.85rem; font-weight:bold;
+  }
+  .choice-btn .txt{display:flex; flex-direction:column;}
+  .choice-btn .txt .vn{font-size:.8rem; color:#888; font-style:italic;}
+  .choice-btn:hover{border-color:var(--purple); background:#f2eeff;}
+  .choice-btn:disabled{cursor:default;}
+
+  .ox-row{display:flex; gap:16px; justify-content:center; margin-top:10px;}
+  .ox-btn{
+    flex:1; max-width:150px; padding:26px 0; border-radius:20px; border:none; cursor:pointer;
+    font-size:2.4rem; font-weight:bold; color:#fff; box-shadow:0 6px 0 rgba(0,0,0,.15);
+  }
+  .ox-btn.o{background:linear-gradient(180deg,#4fd18b,#20a562);}
+  .ox-btn.x{background:linear-gradient(180deg,#ff8080,#e6483f);}
+  .ox-btn:active{transform:translateY(4px); box-shadow:0 2px 0 rgba(0,0,0,.15);}
+  .ox-btn:disabled{opacity:.5;}
+
+  .choice-btn.correct, .ox-btn.correct{
+    background:linear-gradient(180deg,#7bed9f,#2ed573)!important; border-color:#2ed573!important; color:#fff;
+  }
+  .choice-btn.wrong, .ox-btn.wrong{
+    background:linear-gradient(180deg,#ff9a9a,#ff5c5c)!important; border-color:#ff5c5c!important; color:#fff;
+  }
+
+  .feedback{
+    margin-top:18px; border-radius:16px; padding:16px; animation:pop .25s ease;
+  }
+  @keyframes pop{from{transform:scale(.9); opacity:0;} to{transform:scale(1); opacity:1;}}
+  .feedback.correct{background:#e6fff2; border:2px solid #33d17a;}
+  .feedback.wrong{background:#fff0f0; border:2px solid #ff5c5c;}
+  .feedback .fb-title{font-weight:bold; font-size:1.1rem; margin-bottom:6px;}
+  .feedback.correct .fb-title{color:#1a8f5a;}
+  .feedback.wrong .fb-title{color:#c92a2a;}
+  .feedback .exp-jp{font-size:.95rem; margin-bottom:4px; line-height:1.5;}
+  .feedback .exp-vn{font-size:.88rem; color:#6a5acd; font-style:italic; line-height:1.5;}
+
+  .next-btn{
+    margin-top:16px; width:100%; padding:14px; border:none; border-radius:16px;
+    background:linear-gradient(90deg,var(--purple),var(--pink)); color:#fff; font-size:1.05rem;
+    font-weight:bold; cursor:pointer; box-shadow:0 5px 0 #5a3fc9;
+  }
+  .next-btn:active{transform:translateY(3px); box-shadow:0 2px 0 #5a3fc9;}
+
+  /* Result screen */
+  .result-screen{text-align:center;}
+  .result-emoji{font-size:4rem; margin:6px 0;}
+  .result-score{font-size:2.2rem; font-weight:bold; color:var(--purple); margin:6px 0;}
+  .result-msg{font-size:1.1rem; font-weight:bold; margin:8px 0 4px; color:var(--dark);}
+  .result-msg-vn{font-size:.95rem; color:#6a5acd; font-style:italic; margin-bottom:16px;}
+  .stars{font-size:2rem; letter-spacing:6px; margin:10px 0;}
+  .retry-btns{display:flex; gap:10px; flex-wrap:wrap; justify-content:center; margin-top:10px;}
+  .retry-btns button{
+    border:none; border-radius:16px; padding:12px 20px; font-weight:bold; cursor:pointer; color:#fff;
+    box-shadow:0 4px 0 rgba(0,0,0,.15); font-size:.95rem;
+  }
+  .retry-btns .again{background:linear-gradient(90deg,var(--green),#22b8cf);}
+  .retry-btns .home{background:linear-gradient(90deg,var(--purple),var(--pink));}
+  .retry-btns button:active{transform:translateY(3px); box-shadow:0 1px 0 rgba(0,0,0,.15);}
+
+  .confetti{position:fixed; top:-20px; font-size:1.4rem; animation:fall linear forwards; pointer-events:none;}
+  @keyframes fall{to{transform:translateY(110vh) rotate(360deg); opacity:.2;}}
+
+  footer{text-align:center; color:#5a4d8a; font-size:.75rem; margin-top:18px;}
+</style>
+</head>
+<body>
+<div class="app">
+  <div class="header">
+    <div class="mascot">⚡🔧</div>
+    <h1>配電盤・制御盤 学科試験クイズ</h1>
+    <p>Trò chơi ôn thi lý thuyết - Lắp ráp tủ điện</p>
+  </div>
+
+  <div class="card" id="card"></div>
+  <footer>技能実習評価試験（基礎級）電気機器組立て職種 学習用ゲーム ／ Trò chơi học tập, không phải đề thi chính thức</footer>
+</div>
+
+<script>
+const QUESTIONS = [{"id": 1, "cat_jp": "1. 安全衛生", "cat_vn": "An toàn vệ sinh lao động", "type": "OX", "q_jp": "電気設備の作業を行うときは、必ず保護具（絶縁手袋・保護めがねなど）を着用しなければならない。", "q_vn": "Khi làm việc với thiết bị điện, bắt buộc phải mặc đồ bảo hộ (găng tay cách điện, kính bảo hộ, v.v.).", "answer": "○", "exp_jp": "感電や飛来物によるけがを防ぐため、作業に応じた保護具の着用は義務である。", "exp_vn": "Để phòng tránh điện giật và thương tích do vật bay, việc mặc đồ bảo hộ phù hợp là bắt buộc."}, {"id": 2, "cat_jp": "1. 安全衛生", "cat_vn": "An toàn vệ sinh lao động", "type": "OX", "q_jp": "作業開始前の安全装置の点検は、時間に余裕があるときだけ行えばよい。", "q_vn": "Việc kiểm tra thiết bị an toàn trước khi bắt đầu công việc chỉ cần thực hiện khi có thời gian rảnh.", "answer": "×", "exp_jp": "作業開始前点検は毎回必ず行う必要がある。省略してはならない。", "exp_vn": "Việc kiểm tra trước khi bắt đầu công việc phải được thực hiện mỗi lần, không được bỏ qua."}, {"id": 3, "cat_jp": "1. 安全衛生", "cat_vn": "An toàn vệ sinh lao động", "type": "4T", "q_jp": "感電事故が発生した場合、最初に行うべき行動として最も適切なものはどれか。", "q_vn": "Khi xảy ra tai nạn điện giật, hành động đúng đắn nhất cần thực hiện đầu tiên là gì?", "answer": "電源を遮断してから被災者を救助する", "exp_jp": "感電した人に素手で触れると救助者も感電する危険があるため、必ず電源を遮断してから対応する。", "exp_vn": "Nếu chạm tay không vào người bị điện giật, người cứu cũng có nguy cơ bị điện giật, vì vậy phải ngắt nguồn điện trước.", "choices": [{"jp": "すぐに被災者に素手で触れて助け出す", "vn": "Ngay lập tức dùng tay không chạm vào nạn nhân để cứu"}, {"jp": "電源を遮断してから被災者を救助する", "vn": "Ngắt nguồn điện trước, sau đó mới cứu nạn nhân"}, {"jp": "そのまま様子を見る", "vn": "Cứ đứng nhìn, không làm gì"}, {"jp": "大声で笑って周囲に知らせる", "vn": "Hét lớn cho vui để báo cho mọi người"}]}, {"id": 4, "cat_jp": "1. 安全衛生", "cat_vn": "An toàn vệ sinh lao động", "type": "OX", "q_jp": "整理整頓（5S）は、作業の安全性や効率とは関係がない。", "q_vn": "Việc sắp xếp gọn gàng nơi làm việc (5S) không liên quan đến an toàn và hiệu suất công việc.", "answer": "×", "exp_jp": "整理整頓は、つまずきや工具の紛失、感電などの事故防止につながり、安全と効率の両方に重要である。", "exp_vn": "Sắp xếp gọn gàng giúp phòng tránh vấp ngã, mất dụng cụ, điện giật, rất quan trọng cho cả an toàn và hiệu suất."}, {"id": 5, "cat_jp": "1. 安全衛生", "cat_vn": "An toàn vệ sinh lao động", "type": "4T", "q_jp": "労働災害を防止するために、作業前に行うべきこととして誤っているものはどれか。", "q_vn": "Điều nào sau đây là SAI khi nói về việc cần làm trước khi làm việc để phòng ngừa tai nạn lao động?", "answer": "危険を感じても作業を続ける", "exp_jp": "危険を感じたら直ちに作業を中止し、責任者に報告することが基本である。", "exp_vn": "Khi cảm thấy nguy hiểm, phải dừng ngay công việc và báo cáo cho người phụ trách.", "choices": [{"jp": "作業手順を確認する", "vn": "Xác nhận quy trình làm việc"}, {"jp": "保護具を点検し正しく着用する", "vn": "Kiểm tra và mặc đúng đồ bảo hộ"}, {"jp": "周囲の安全を確認する", "vn": "Kiểm tra an toàn xung quanh"}, {"jp": "危険を感じても作業を続ける", "vn": "Dù cảm thấy nguy hiểm vẫn tiếp tục làm việc"}]}, {"id": 6, "cat_jp": "1. 安全衛生", "cat_vn": "An toàn vệ sinh lao động", "type": "OX", "q_jp": "電動工具を使用する際は、使用前にコードの損傷の有無を確認する必要がある。", "q_vn": "Khi sử dụng dụng cụ điện cầm tay, cần kiểm tra dây điện có bị hỏng hay không trước khi sử dụng.", "answer": "○", "exp_jp": "コードの損傷は感電や漏電火災の原因となるため、使用前点検は必須である。", "exp_vn": "Dây điện bị hỏng có thể gây điện giật hoặc cháy do rò điện, nên việc kiểm tra trước khi dùng là bắt buộc."}, {"id": 7, "cat_jp": "1. 安全衛生", "cat_vn": "An toàn vệ sinh lao động", "type": "4T", "q_jp": "労働安全衛生法の目的として最も適切なものはどれか。", "q_vn": "Mục đích của Luật An toàn Vệ sinh Lao động là gì?", "answer": "労働者の安全と健康を確保すること", "exp_jp": "労働安全衛生法は職場における労働者の安全と健康を確保することを目的とする法律である。", "exp_vn": "Luật An toàn Vệ sinh Lao động nhằm mục đích đảm bảo an toàn và sức khỏe cho người lao động tại nơi làm việc.", "choices": [{"jp": "会社の利益を最大化すること", "vn": "Tối đa hóa lợi nhuận công ty"}, {"jp": "労働者の安全と健康を確保すること", "vn": "Đảm bảo an toàn và sức khỏe cho người lao động"}, {"jp": "労働時間を延長すること", "vn": "Kéo dài thời gian làm việc"}, {"jp": "製品の生産量を増やすこと", "vn": "Tăng sản lượng sản phẩm"}]}, {"id": 8, "cat_jp": "2. 工具・器具", "cat_vn": "Dụng cụ, đồ nghề", "type": "OX", "q_jp": "ドライバーは、ねじの頭の大きさや溝の形状に合ったものを選んで使用する。", "q_vn": "Tua vít phải được chọn phù hợp với kích thước và hình dạng rãnh của đầu vít.", "answer": "○", "exp_jp": "合わないドライバーを使うと、ねじやドライバーを傷める原因となる。", "exp_vn": "Nếu dùng tua vít không phù hợp sẽ làm hỏng vít hoặc tua vít."}, {"id": 9, "cat_jp": "2. 工具・器具", "cat_vn": "Dụng cụ, đồ nghề", "type": "4T", "q_jp": "電線の被覆をむくために使用する工具はどれか。", "q_vn": "Dụng cụ nào được dùng để tuốt vỏ bọc dây điện?", "answer": "ワイヤストリッパ", "exp_jp": "ワイヤストリッパは電線の被覆を一定の長さでむくための専用工具である。", "exp_vn": "Kìm tuốt dây (wire stripper) là dụng cụ chuyên dùng để tuốt vỏ bọc dây điện với độ dài nhất định.", "choices": [{"jp": "スパナ", "vn": "Cờ lê"}, {"jp": "ワイヤストリッパ", "vn": "Kìm tuốt dây"}, {"jp": "ノギス", "vn": "Thước cặp"}, {"jp": "トルクレンチ", "vn": "Cờ lê lực"}]}, {"id": 10, "cat_jp": "2. 工具・器具", "cat_vn": "Dụng cụ, đồ nghề", "type": "OX", "q_jp": "トルクレンチは、ねじを規定の締め付けトルクで締めるために使用する。", "q_vn": "Cờ lê lực (torque wrench) được dùng để siết vít với lực siết theo quy định.", "answer": "○", "exp_jp": "規定トルクを超えて締めると部品破損、不足すると緩みの原因になる。", "exp_vn": "Nếu siết quá lực quy định sẽ làm hỏng linh kiện, nếu siết thiếu sẽ gây lỏng."}, {"id": 11, "cat_jp": "2. 工具・器具", "cat_vn": "Dụng cụ, đồ nghề", "type": "4T", "q_jp": "端子に電線を接続する際、電線の端に圧着端子を取り付けるために使用する工具はどれか。", "q_vn": "Dụng cụ nào dùng để bấm đầu cốt (đầu nối ép) vào đầu dây điện khi đấu nối vào cực đấu dây?", "answer": "圧着工具（圧着ペンチ）", "exp_jp": "圧着工具は電線と圧着端子をかしめて確実に接続するための工具である。", "exp_vn": "Kìm bấm cốt dùng để ép chặt đầu cốt vào dây điện, đảm bảo kết nối chắc chắn.", "choices": [{"jp": "圧着工具（圧着ペンチ）", "vn": "Kìm bấm cốt"}, {"jp": "ハンマ", "vn": "Búa"}, {"jp": "けがき針", "vn": "Kim vạch dấu"}, {"jp": "リーマ", "vn": "Dao doa lỗ"}]}, {"id": 12, "cat_jp": "2. 工具・器具", "cat_vn": "Dụng cụ, đồ nghề", "type": "OX", "q_jp": "モンキレンチは、対象の大きさに合わせて口の幅を調整できる工具である。", "q_vn": "Mỏ lết (monkey wrench) là dụng cụ có thể điều chỉnh độ rộng miệng theo kích thước vật cần siết.", "answer": "○", "exp_jp": "モンキレンチはアジャスタで口の開きを調整できるため、様々なサイズのボルト・ナットに対応できる。", "exp_vn": "Mỏ lết có thể điều chỉnh độ mở miệng bằng vít điều chỉnh, phù hợp với nhiều kích cỡ bu lông, đai ốc khác nhau."}, {"id": 13, "cat_jp": "2. 工具・器具", "cat_vn": "Dụng cụ, đồ nghề", "type": "4T", "q_jp": "穴あけ加工に使用する工具として適切なものはどれか。", "q_vn": "Dụng cụ nào phù hợp để khoan lỗ?", "answer": "電気ドリル", "exp_jp": "電気ドリルは板金や部品に穴をあける際に使用する電動工具である。", "exp_vn": "Máy khoan điện là dụng cụ điện dùng để khoan lỗ trên tấm kim loại hoặc linh kiện.", "choices": [{"jp": "電気ドリル", "vn": "Máy khoan điện"}, {"jp": "やすり", "vn": "Giũa"}, {"jp": "ペンチ", "vn": "Kìm"}, {"jp": "スケール", "vn": "Thước đo"}]}, {"id": 14, "cat_jp": "2. 工具・器具", "cat_vn": "Dụng cụ, đồ nghề", "type": "OX", "q_jp": "はんだごては、電子部品や配線をはんだ付けするために使用する工具である。", "q_vn": "Mỏ hàn thiếc là dụng cụ dùng để hàn thiếc linh kiện điện tử hoặc dây dẫn.", "answer": "○", "exp_jp": "はんだごては加熱してはんだを溶かし、電気的・機械的に接続する際に用いる。", "exp_vn": "Mỏ hàn thiếc dùng nhiệt để làm chảy thiếc, giúp kết nối về điện và cơ khí."}, {"id": 15, "cat_jp": "3. 材料", "cat_vn": "Vật liệu", "type": "OX", "q_jp": "銅は電気を通しやすい導電材料である。", "q_vn": "Đồng là vật liệu dẫn điện tốt.", "answer": "○", "exp_jp": "銅は電気抵抗が小さく、電線や導体に広く使用される代表的な導電材料である。", "exp_vn": "Đồng có điện trở nhỏ, là vật liệu dẫn điện tiêu biểu được dùng rộng rãi cho dây điện và vật dẫn."}, {"id": 16, "cat_jp": "3. 材料", "cat_vn": "Vật liệu", "type": "4T", "q_jp": "電気を通しにくく、感電防止のために電線の被覆などに使用される材料を何というか。", "q_vn": "Vật liệu khó dẫn điện, được dùng để bọc dây điện nhằm phòng chống điện giật, gọi là gì?", "answer": "絶縁材料", "exp_jp": "絶縁材料はビニルやゴムなど電気を通しにくい材料で、感電防止や短絡防止に用いられる。", "exp_vn": "Vật liệu cách điện như nhựa PVC, cao su, khó dẫn điện, dùng để phòng chống điện giật và ngắn mạch.", "choices": [{"jp": "導電材料", "vn": "Vật liệu dẫn điện"}, {"jp": "絶縁材料", "vn": "Vật liệu cách điện"}, {"jp": "磁性材料", "vn": "Vật liệu từ tính"}, {"jp": "半導体材料", "vn": "Vật liệu bán dẫn"}]}, {"id": 17, "cat_jp": "3. 材料", "cat_vn": "Vật liệu", "type": "OX", "q_jp": "アルミニウムは銅より軽いが、導電性は銅より劣る。", "q_vn": "Nhôm nhẹ hơn đồng, nhưng độ dẫn điện kém hơn đồng.", "answer": "○", "exp_jp": "アルミニウムは軽量だが導電率は銅の約6割程度であり、用途に応じて使い分けられる。", "exp_vn": "Nhôm nhẹ nhưng độ dẫn điện chỉ khoảng 60% so với đồng, được sử dụng tùy theo mục đích."}, {"id": 18, "cat_jp": "3. 材料", "cat_vn": "Vật liệu", "type": "4T", "q_jp": "配電盤・制御盤の主材料として使われないものはどれか。", "q_vn": "Vật liệu nào KHÔNG được sử dụng làm vật liệu chính cho tủ điện phân phối/tủ điều khiển?", "answer": "食品", "exp_jp": "配電盤・制御盤の主材料には遮断器、開閉器、端子台、電線等があり、食品は関係がない。", "exp_vn": "Vật liệu chính của tủ điện gồm aptomat, công tắc, cầu đấu dây, dây điện v.v., thực phẩm không liên quan.", "choices": [{"jp": "配線用遮断器", "vn": "Aptomat (CB)"}, {"jp": "端子台", "vn": "Cầu đấu dây (terminal block)"}, {"jp": "食品", "vn": "Thực phẩm"}, {"jp": "電線・ケーブル", "vn": "Dây điện, cáp điện"}]}, {"id": 19, "cat_jp": "4. 電気の基礎", "cat_vn": "Kiến thức cơ bản về điện", "type": "OX", "q_jp": "オームの法則によれば、電圧は電流と抵抗の積で表される（V=IR）。", "q_vn": "Theo định luật Ohm, điện áp bằng tích của dòng điện và điện trở (V=IR).", "answer": "○", "exp_jp": "オームの法則 V=IR は電気回路の基本法則である。", "exp_vn": "Định luật Ohm V=IR là định luật cơ bản của mạch điện."}, {"id": 20, "cat_jp": "4. 電気の基礎", "cat_vn": "Kiến thức cơ bản về điện", "type": "4T", "q_jp": "直流（DC）の説明として正しいものはどれか。", "q_vn": "Mô tả nào đúng về dòng điện một chiều (DC)?", "answer": "常に一定方向に流れる電流", "exp_jp": "直流（DC）は電流の向きが常に一定であるのに対し、交流（AC）は周期的に向きが変わる。", "exp_vn": "Dòng điện một chiều (DC) luôn chạy theo một hướng cố định, trong khi dòng điện xoay chiều (AC) đổi chiều theo chu kỳ.", "choices": [{"jp": "時間とともに周期的に向きが変わる電流", "vn": "Dòng điện đổi chiều theo chu kỳ theo thời gian"}, {"jp": "常に一定方向に流れる電流", "vn": "Dòng điện luôn chạy theo một chiều cố định"}, {"jp": "電圧が常に0の電流", "vn": "Dòng điện có điện áp luôn bằng 0"}, {"jp": "磁力のみで発生する電流", "vn": "Dòng điện chỉ sinh ra bởi từ lực"}]}, {"id": 21, "cat_jp": "4. 電気の基礎", "cat_vn": "Kiến thức cơ bản về điện", "type": "OX", "q_jp": "絶縁抵抗が低い電気機器は、漏電の危険性が高い。", "q_vn": "Thiết bị điện có điện trở cách điện thấp có nguy cơ rò điện cao.", "answer": "○", "exp_jp": "絶縁抵抗が低いと電流が漏れやすく、感電や火災の危険が高まる。", "exp_vn": "Nếu điện trở cách điện thấp, dòng điện dễ bị rò rỉ, làm tăng nguy cơ điện giật và cháy nổ."}, {"id": 22, "cat_jp": "4. 電気の基礎", "cat_vn": "Kiến thức cơ bản về điện", "type": "4T", "q_jp": "絶縁抵抗を測定する際に使用する測定器はどれか。", "q_vn": "Dụng cụ nào được dùng để đo điện trở cách điện?", "answer": "絶縁抵抗計（メガー）", "exp_jp": "絶縁抵抗計（メガー）は電気機器や配線の絶縁性能を測定するための測定器である。", "exp_vn": "Máy đo điện trở cách điện (Megger) dùng để đo hiệu năng cách điện của thiết bị điện và dây dẫn.", "choices": [{"jp": "回転計", "vn": "Máy đo tốc độ quay"}, {"jp": "絶縁抵抗計（メガー）", "vn": "Máy đo điện trở cách điện (Megger)"}, {"jp": "周波数計", "vn": "Máy đo tần số"}, {"jp": "照度計", "vn": "Máy đo độ sáng"}]}, {"id": 23, "cat_jp": "4. 電気の基礎", "cat_vn": "Kiến thức cơ bản về điện", "type": "OX", "q_jp": "接地（アース）は、漏電時に感電を防止するための重要な安全対策である。", "q_vn": "Tiếp địa (nối đất) là biện pháp an toàn quan trọng để phòng chống điện giật khi có rò điện.", "answer": "○", "exp_jp": "接地は漏れた電流を大地に逃がし、感電や機器損傷を防ぐ役割を持つ。", "exp_vn": "Tiếp địa giúp dòng điện rò chạy xuống đất, phòng tránh điện giật và hư hỏng thiết bị."}, {"id": 24, "cat_jp": "4. 電気の基礎", "cat_vn": "Kiến thức cơ bản về điện", "type": "4T", "q_jp": "三相交流の説明として正しいものはどれか。", "q_vn": "Mô tả nào đúng về dòng điện xoay chiều ba pha?", "answer": "位相が120度ずつずれた3つの交流を組み合わせたもの", "exp_jp": "三相交流は位相が120度ずつ異なる3つの単相交流を組み合わせたもので、工場等の動力用電源に広く使われる。", "exp_vn": "Điện xoay chiều 3 pha là sự kết hợp của 3 dòng điện xoay chiều 1 pha lệch nhau 120 độ, được dùng rộng rãi làm nguồn điện động lực trong nhà máy.", "choices": [{"jp": "1本の電線で電力を送る方式", "vn": "Phương thức truyền điện bằng 1 dây dẫn"}, {"jp": "位相が120度ずつずれた3つの交流を組み合わせたもの", "vn": "Là sự kết hợp của 3 dòng xoay chiều lệch pha nhau 120 độ"}, {"jp": "直流電源の一種", "vn": "Một loại nguồn điện một chiều"}, {"jp": "周波数が常に0Hzの電流", "vn": "Dòng điện có tần số luôn bằng 0Hz"}]}, {"id": 25, "cat_jp": "5. 配線・接続作業", "cat_vn": "Đấu dây và đấu nối", "type": "OX", "q_jp": "電線の接続部分は、絶縁処理を行わなくてもよい。", "q_vn": "Không cần xử lý cách điện cho phần đấu nối dây dẫn.", "answer": "×", "exp_jp": "接続部分は絶縁テープなどで確実に絶縁処理を行う必要がある。怠ると感電や短絡の原因になる。", "exp_vn": "Phần đấu nối phải được xử lý cách điện chắc chắn bằng băng keo cách điện, nếu không sẽ gây điện giật hoặc ngắn mạch."}, {"id": 26, "cat_jp": "5. 配線・接続作業", "cat_vn": "Đấu dây và đấu nối", "type": "4T", "q_jp": "接続図（配線図）を見て作業の段取りを行う際、最初に確認すべきこととして適切なものはどれか。", "q_vn": "Khi xem sơ đồ đấu nối để chuẩn bị công việc, điều cần xác nhận đầu tiên là gì?", "answer": "図記号・回路構成全体を理解する", "exp_jp": "接続図全体の構成と図記号の意味を理解してから作業段取りを行うことがミス防止につながる。", "exp_vn": "Hiểu rõ cấu trúc tổng thể và ý nghĩa ký hiệu trong sơ đồ trước khi bắt đầu giúp phòng tránh sai sót.", "choices": [{"jp": "使用する電線の色だけを確認する", "vn": "Chỉ kiểm tra màu dây điện sẽ dùng"}, {"jp": "図記号・回路構成全体を理解する", "vn": "Hiểu toàn bộ ký hiệu và cấu trúc mạch điện"}, {"jp": "作業の順番を無視して進める", "vn": "Bỏ qua thứ tự công việc và tiến hành"}, {"jp": "何も確認せず作業を始める", "vn": "Bắt đầu công việc mà không kiểm tra gì"}]}, {"id": 27, "cat_jp": "5. 配線・接続作業", "cat_vn": "Đấu dây và đấu nối", "type": "OX", "q_jp": "電線を端子台に接続する際は、規定のねじの締め付けトルクを守る必要がある。", "q_vn": "Khi đấu dây vào cầu đấu (terminal block), phải tuân thủ lực siết vít theo quy định.", "answer": "○", "exp_jp": "締め付けが弱いと接触不良、強すぎると端子破損の原因になるため規定トルクを守る。", "exp_vn": "Nếu siết quá lỏng sẽ gây tiếp xúc kém, nếu siết quá chặt sẽ làm hỏng cực đấu dây, vì vậy phải tuân thủ lực siết quy định."}, {"id": 28, "cat_jp": "5. 配線・接続作業", "cat_vn": "Đấu dây và đấu nối", "type": "4T", "q_jp": "配線作業において、電線の色分け（例：赤・白・黒など）を守る主な理由は何か。", "q_vn": "Trong công việc đấu dây, lý do chính để tuân thủ quy định phân biệt màu dây điện (ví dụ: đỏ, trắng, đen) là gì?", "answer": "回路を誤配線せず、点検や保守をしやすくするため", "exp_jp": "電線の色分けは誤配線の防止と、後の点検・保守作業を容易にするために重要である。", "exp_vn": "Việc phân biệt màu dây điện rất quan trọng để tránh đấu nhầm và giúp việc kiểm tra, bảo trì sau này dễ dàng hơn.", "choices": [{"jp": "見た目をきれいにするため", "vn": "Để làm cho đẹp mắt"}, {"jp": "回路を誤配線せず、点検や保守をしやすくするため", "vn": "Để tránh đấu nhầm mạch và dễ kiểm tra, bảo trì"}, {"jp": "電線の値段を安くするため", "vn": "Để giảm giá thành dây điện"}, {"jp": "特に理由はない", "vn": "Không có lý do đặc biệt"}]}, {"id": 29, "cat_jp": "5. 配線・接続作業", "cat_vn": "Đấu dây và đấu nối", "type": "OX", "q_jp": "配線作業が終わったら、通電前に必ず配線の誤り（誤配線・短絡など）がないか点検する。", "q_vn": "Sau khi hoàn thành đấu dây, trước khi cấp điện phải kiểm tra xem có đấu nhầm hoặc ngắn mạch hay không.", "answer": "○", "exp_jp": "通電前の点検は事故防止の基本であり、必ず実施しなければならない。", "exp_vn": "Kiểm tra trước khi cấp điện là nguyên tắc cơ bản để phòng tránh tai nạn, bắt buộc phải thực hiện."}, {"id": 30, "cat_jp": "6. 盤の構成機器", "cat_vn": "Thiết bị cấu thành tủ điện", "type": "4T", "q_jp": "電路に過電流が流れたとき自動的に電路を遮断する機器はどれか。", "q_vn": "Thiết bị nào tự động ngắt mạch điện khi có dòng điện quá tải chạy qua?", "answer": "配線用遮断器（ブレーカ）", "exp_jp": "配線用遮断器（ブレーカ）は過電流や短絡から電路や機器を保護するための保護機器である。", "exp_vn": "Aptomat (CB) là thiết bị bảo vệ mạch điện và thiết bị khỏi dòng quá tải và ngắn mạch.", "choices": [{"jp": "端子台", "vn": "Cầu đấu dây"}, {"jp": "配線用遮断器（ブレーカ）", "vn": "Aptomat (CB - Circuit Breaker)"}, {"jp": "表示灯", "vn": "Đèn báo"}, {"jp": "電力量計", "vn": "Công tơ điện"}]}, {"id": 31, "cat_jp": "6. 盤の構成機器", "cat_vn": "Thiết bị cấu thành tủ điện", "type": "OX", "q_jp": "継電器（リレー）は、電気信号を受けて接点を開閉し、他の回路を制御する機器である。", "q_vn": "Rơ le (relay) là thiết bị nhận tín hiệu điện để đóng/mở tiếp điểm, điều khiển mạch khác.", "answer": "○", "exp_jp": "リレーは制御回路において信号の中継・切り替えを行う重要な機器である。", "exp_vn": "Rơ le là thiết bị quan trọng trong mạch điều khiển, dùng để trung chuyển và chuyển đổi tín hiệu."}, {"id": 32, "cat_jp": "6. 盤の構成機器", "cat_vn": "Thiết bị cấu thành tủ điện", "type": "4T", "q_jp": "電圧や電流の大きさを表示する計器はどれか。", "q_vn": "Đồng hồ nào hiển thị giá trị điện áp hoặc dòng điện?", "answer": "電流計・電圧計", "exp_jp": "電流計は回路に流れる電流を、電圧計は回路にかかる電圧を表示する計器である。", "exp_vn": "Ampe kế đo dòng điện chạy trong mạch, vôn kế đo điện áp đặt vào mạch.", "choices": [{"jp": "電流計・電圧計", "vn": "Ampe kế, Vôn kế"}, {"jp": "温度計", "vn": "Nhiệt kế"}, {"jp": "照度計", "vn": "Máy đo độ sáng"}, {"jp": "周波数計のみ使用不可", "vn": "Không dùng máy đo tần số"}]}, {"id": 33, "cat_jp": "6. 盤の構成機器", "cat_vn": "Thiết bị cấu thành tủ điện", "type": "OX", "q_jp": "端子台は、電線同士や機器と電線を接続するために用いる部品である。", "q_vn": "Cầu đấu dây (terminal block) là linh kiện dùng để đấu nối dây điện với nhau hoặc dây điện với thiết bị.", "answer": "○", "exp_jp": "端子台は複数の電線を安全かつ確実に接続・分岐するために使用される。", "exp_vn": "Cầu đấu dây được dùng để đấu nối và phân nhánh nhiều dây điện một cách an toàn và chắc chắn."}, {"id": 34, "cat_jp": "6. 盤の構成機器", "cat_vn": "Thiết bị cấu thành tủ điện", "type": "4T", "q_jp": "雷などによる異常電圧（サージ）から機器を保護する機器はどれか。", "q_vn": "Thiết bị nào bảo vệ thiết bị khỏi điện áp bất thường (surge) do sét đánh v.v.?", "answer": "避雷器（アレスター）", "exp_jp": "避雷器（アレスター）は雷サージなどの異常電圧から機器を保護するための装置である。", "exp_vn": "Chống sét (Arrester) là thiết bị bảo vệ máy móc khỏi điện áp bất thường như sét đánh.", "choices": [{"jp": "避雷器（アレスター）", "vn": "Chống sét (Arrester/SPD)"}, {"jp": "表示灯", "vn": "Đèn báo"}, {"jp": "端子台", "vn": "Cầu đấu dây"}, {"jp": "配線ダクト", "vn": "Máng cáp"}]}, {"id": 35, "cat_jp": "7. 図記号・製図", "cat_vn": "Ký hiệu và bản vẽ", "type": "OX", "q_jp": "日本工業規格（JIS）に定められた電気用図記号を用いることで、誰が見ても回路の内容を理解しやすくなる。", "q_vn": "Việc sử dụng ký hiệu điện theo tiêu chuẩn công nghiệp Nhật Bản (JIS) giúp bất kỳ ai xem cũng dễ hiểu nội dung mạch điện.", "answer": "○", "exp_jp": "JISの電気用図記号は統一規格であり、共通理解を助けるために重要である。", "exp_vn": "Ký hiệu điện theo JIS là tiêu chuẩn thống nhất, quan trọng để giúp mọi người hiểu chung."}, {"id": 36, "cat_jp": "7. 図記号・製図", "cat_vn": "Ký hiệu và bản vẽ", "type": "4T", "q_jp": "接続図（結線図）の主な目的は何か。", "q_vn": "Mục đích chính của sơ đồ đấu nối là gì?", "answer": "機器間の電気的な接続関係を示すため", "exp_jp": "接続図は機器や端子間の配線・接続関係を明確に示すための図面である。", "exp_vn": "Sơ đồ đấu nối là bản vẽ thể hiện rõ mối quan hệ đấu dây, kết nối giữa các thiết bị và cực đấu dây.", "choices": [{"jp": "機器の外観だけを示すため", "vn": "Chỉ để thể hiện hình dáng bên ngoài của thiết bị"}, {"jp": "機器間の電気的な接続関係を示すため", "vn": "Để thể hiện mối quan hệ đấu nối điện giữa các thiết bị"}, {"jp": "会社のロゴを表示するため", "vn": "Để hiển thị logo công ty"}, {"jp": "価格を表示するため", "vn": "Để hiển thị giá cả"}]}, {"id": 37, "cat_jp": "8. 測定器", "cat_vn": "Dụng cụ đo", "type": "4T", "q_jp": "回路の導通（つながり）を確認する際に一般的に使用する測定器はどれか。", "q_vn": "Dụng cụ nào thường được dùng để kiểm tra tính liên tục (thông mạch) của mạch điện?", "answer": "テスタ（回路計）", "exp_jp": "テスタ（回路計）は電圧、電流、抵抗、導通などを測定できる汎用の測定器である。", "exp_vn": "Đồng hồ vạn năng (Tester) là dụng cụ đo đa năng có thể đo điện áp, dòng điện, điện trở, thông mạch.", "choices": [{"jp": "回転計", "vn": "Máy đo tốc độ quay"}, {"jp": "テスタ（回路計）", "vn": "Đồng hồ vạn năng (VOM/Tester)"}, {"jp": "照度計", "vn": "Máy đo độ sáng"}, {"jp": "湿度計", "vn": "Máy đo độ ẩm"}]}, {"id": 38, "cat_jp": "8. 測定器", "cat_vn": "Dụng cụ đo", "type": "OX", "q_jp": "測定器を使用する前には、測定範囲（レンジ）が適切に設定されているか確認する必要がある。", "q_vn": "Trước khi sử dụng dụng cụ đo, cần kiểm tra xem thang đo (range) đã được cài đặt phù hợp hay chưa.", "answer": "○", "exp_jp": "レンジ設定を誤ると正確な測定ができないだけでなく、測定器の破損につながることもある。", "exp_vn": "Nếu cài đặt sai thang đo, không chỉ đo không chính xác mà còn có thể làm hỏng dụng cụ đo."}];
+
+const CATS = [...new Set(QUESTIONS.map(q=>q.cat_jp))];
+const CAT_COLORS = ["#ff6fa5","#7b5cff","#4fc3f7","#33d17a","#ffb347","#ff5c5c","#22b8cf","#a366ff"];
+
+let state = {
+  pool: [],
+  idx: 0,
+  score: 0,
+  streak: 0,
+  bestStreak: 0,
+  answered: false,
+  catLabel: "すべて / Tất cả"
+};
+
+function shuffle(arr){
+  const a = arr.slice();
+  for(let i=a.length-1;i>0;i--){
+    const j = Math.floor(Math.random()*(i+1));
+    [a[i],a[j]]=[a[j],a[i]];
+  }
+  return a;
+}
+
+function renderStart(){
+  state = {pool:[], idx:0, score:0, streak:0, bestStreak:0, answered:false, catLabel:""};
+  const card = document.getElementById("card");
+  let catButtons = CATS.map((c,i)=>{
+    const vn = QUESTIONS.find(q=>q.cat_jp===c).cat_vn;
+    const color = CAT_COLORS[i % CAT_COLORS.length];
+    return `<button class="cat-btn" style="background:${color}" data-cat="${c}">${c}<small>${vn}</small></button>`;
+  }).join("");
+
+  card.innerHTML = `
+    <div class="start-screen">
+      <h2>🎮 挑戦する分野を選ぼう！</h2>
+      <p style="color:#6a5acd; font-style:italic; margin-top:-6px;">Chọn chủ đề bạn muốn thử thách!</p>
+      <div class="cat-grid">
+        <button class="cat-btn all" data-cat="ALL">🌟 全部まとめて挑戦！<small>Thử thách tất cả!</small></button>
+        ${catButtons}
+      </div>
+    </div>
+  `;
+  card.querySelectorAll(".cat-btn").forEach(btn=>{
+    btn.onclick = () => startQuiz(btn.dataset.cat);
+  });
+}
+
+function startQuiz(cat){
+  const list = cat === "ALL" ? QUESTIONS : QUESTIONS.filter(q=>q.cat_jp===cat);
+  state.pool = shuffle(list);
+  state.idx = 0;
+  state.score = 0;
+  state.streak = 0;
+  state.bestStreak = 0;
+  state.catLabel = cat === "ALL" ? "全分野 / Tất cả chủ đề" : cat;
+  renderQuestion();
+}
+
+function renderProgress(){
+  const total = state.pool.length;
+  const pct = Math.round((state.idx/total)*100);
+  return `
+    <div class="progress-wrap">
+      <div class="progress-bar"><div class="progress-fill" style="width:${pct}%"></div></div>
+      <div class="score-pill">⭐ ${state.score} / ${total}</div>
+    </div>
+    <div class="streak">${state.streak>=2 ? "🔥 "+state.streak+" 連続正解！ Chuỗi đúng "+state.streak+" câu!" : ""}</div>
+  `;
+}
+
+function renderQuestion(){
+  const card = document.getElementById("card");
+  const q = state.pool[state.idx];
+  state.answered = false;
+
+  let body = "";
+  if(q.type === "OX"){
+    body = `
+      <div class="ox-row">
+        <button class="ox-btn o" data-val="○">○</button>
+        <button class="ox-btn x" data-val="×">×</button>
+      </div>
+    `;
+  } else {
+    const labels = ["A","B","C","D"];
+    body = `<div class="choices">` + q.choices.map((c,i)=>`
+      <button class="choice-btn" data-val="${c.jp.replace(/"/g,'&quot;')}">
+        <span class="badge">${labels[i]}</span>
+        <span class="txt"><span class="jp">${c.jp}</span><span class="vn">${c.vn}</span></span>
+      </button>
+    `).join("") + `</div>`;
+  }
+
+  card.innerHTML = `
+    ${renderProgress()}
+    <div class="cat-tag">${q.cat_jp}</div>
+    <div class="question-jp">Q${state.idx+1}. ${q.q_jp}</div>
+    <div class="question-vn">${q.q_vn}</div>
+    ${body}
+    <div id="feedback-area"></div>
+  `;
+
+  const btns = card.querySelectorAll(".ox-btn, .choice-btn");
+  btns.forEach(b => b.onclick = () => handleAnswer(b, q, btns));
+}
+
+function handleAnswer(btn, q, allBtns){
+  if(state.answered) return;
+  state.answered = true;
+  const chosen = btn.dataset.val;
+  const isCorrect = chosen === q.answer;
+
+  allBtns.forEach(b=>{
+    b.disabled = true;
+    if(b.dataset.val === q.answer) b.classList.add("correct");
+    else if(b === btn) b.classList.add("wrong");
+  });
+
+  if(isCorrect){
+    state.score++;
+    state.streak++;
+    state.bestStreak = Math.max(state.bestStreak, state.streak);
+    launchConfetti();
+  } else {
+    state.streak = 0;
+  }
+
+  const fbBox = document.getElementById("feedback-area");
+  const praises = ["すごい！🎉","やった！✨","正解だよ！👏","さすが！💪","ナイス！🌟"];
+  const encourages = ["だいじょうぶ！次はできるよ😊","おしい！💡","気にしないで、続けよう！🙌","一緒に頑張ろう！🌈"];
+  const title = isCorrect
+    ? praises[Math.floor(Math.random()*praises.length)] + " 正解 / Chính xác!"
+    : encourages[Math.floor(Math.random()*encourages.length)] + " 不正解 / Chưa đúng";
+
+  fbBox.innerHTML = `
+    <div class="feedback ${isCorrect?'correct':'wrong'}">
+      <div class="fb-title">${title}</div>
+      <div class="exp-jp">📘 ${q.exp_jp}</div>
+      <div class="exp-vn">📗 ${q.exp_vn}</div>
+    </div>
+    <button class="next-btn" id="nextBtn">${state.idx+1 < state.pool.length ? "次の問題へ ▶ Câu tiếp theo" : "結果を見る 🏆 Xem kết quả"}</button>
+  `;
+  document.getElementById("nextBtn").onclick = () => {
+    state.idx++;
+    if(state.idx < state.pool.length) renderQuestion();
+    else renderResult();
+  };
+}
+
+function renderResult(){
+  const total = state.pool.length;
+  const pct = Math.round((state.score/total)*100);
+  let emoji, msgJp, msgVn, stars;
+  if(pct === 100){
+    emoji="🏆👑"; msgJp="満点！すばらしい！本当の合格レベルです！"; msgVn="Điểm tuyệt đối! Tuyệt vời! Bạn đã đạt trình độ đậu thật sự!"; stars="★★★★★";
+  } else if(pct >= 80){
+    emoji="🎉🌟"; msgJp="とてもよくできました！この調子で頑張ろう！"; msgVn="Làm rất tốt! Hãy tiếp tục cố gắng như vậy!"; stars="★★★★☆";
+  } else if(pct >= 60){
+    emoji="😊👍"; msgJp="いい感じ！もう少し復習すればバッチリ！"; msgVn="Khá tốt! Ôn thêm một chút nữa là hoàn hảo!"; stars="★★★☆☆";
+  } else if(pct >= 40){
+    emoji="💪🙂"; msgJp="よく挑戦したね！もう一度やってみよう！"; msgVn="Bạn đã cố gắng rồi! Hãy thử lại lần nữa nhé!"; stars="★★☆☆☆";
+  } else {
+    emoji="🌱😉"; msgJp="だいじょうぶ！練習すればきっとできる！"; msgVn="Không sao cả! Luyện tập nhiều sẽ làm được thôi!"; stars="★☆☆☆☆";
+  }
+
+  const card = document.getElementById("card");
+  card.innerHTML = `
+    <div class="result-screen">
+      <div class="cat-tag">${state.catLabel}</div>
+      <div class="result-emoji">${emoji}</div>
+      <div class="result-score">${state.score} / ${total} 問正解 (${pct}%)</div>
+      <div class="stars">${stars}</div>
+      <div class="result-msg">${msgJp}</div>
+      <div class="result-msg-vn">${msgVn}</div>
+      <div style="margin-top:6px; color:#e85d04; font-weight:bold;">🔥 最高連続正解 / Chuỗi đúng liên tiếp cao nhất: ${state.bestStreak}</div>
+      <div class="retry-btns">
+        <button class="again" id="retryBtn">🔁 もう一度 / Làm lại</button>
+        <button class="home" id="homeBtn">🏠 分野選択に戻る / Về chọn chủ đề</button>
+      </div>
+    </div>
+  `;
+  document.getElementById("retryBtn").onclick = () => {
+    const cat = state.catLabel.startsWith("全分野") ? "ALL" : state.catLabel;
+    startQuiz(cat);
+  };
+  document.getElementById("homeBtn").onclick = renderStart;
+
+  if(pct >= 60) launchConfetti(30);
+}
+
+function launchConfetti(n){
+  n = n || 8;
+  const emojis = ["🎉","✨","⭐","🎊","💫"];
+  for(let i=0;i<n;i++){
+    const el = document.createElement("div");
+    el.className = "confetti";
+    el.textContent = emojis[Math.floor(Math.random()*emojis.length)];
+    el.style.left = Math.random()*100 + "vw";
+    el.style.animationDuration = (2 + Math.random()*1.5) + "s";
+    document.body.appendChild(el);
+    setTimeout(()=>el.remove(), 4000);
+  }
+}
+
+renderStart();
+</script>
+</body>
+</html>
