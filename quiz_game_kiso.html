@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>配電盤・制御盤クイズ（基礎級○×形式）/ Trò chơi ôn thi</title>
+<title>配電盤・制御盤クイズ（基礎級○×形式）</title>
 <style>
   :root{
     --pink:#ff6fa5; --purple:#7b5cff; --blue:#4fc3f7; --green:#33d17a;
@@ -19,10 +19,13 @@
   }
   .app{width:100%; max-width:720px;}
   .header{text-align:center; margin-bottom:18px;}
-  .header h1{font-size:1.4rem; margin:0 0 4px; color:#fff; text-shadow:2px 2px 0 rgba(123,92,255,.6);}
+  .header h1{font-size:1.3rem; margin:0 0 4px; color:#fff; text-shadow:2px 2px 0 rgba(123,92,255,.6);}
   .header p{margin:2px 0; color:#4a3f7a; font-weight:bold;}
   .mascot{font-size:2.6rem; display:inline-block; animation:bounce 2s infinite;}
   @keyframes bounce{0%,100%{transform:translateY(0);}50%{transform:translateY(-10px);}}
+
+  ruby rt{font-size:.6em; color:#7b5cff; font-weight:normal;}
+  .header h1 ruby rt{color:#ffe29f;}
 
   .card{background:#fff; border-radius:24px; padding:22px 20px; box-shadow:0 12px 30px rgba(90,60,150,.25); position:relative; overflow:hidden;}
 
@@ -45,10 +48,10 @@
     font-weight:bold; font-size:.95rem; color:#fff; text-align:left;
     box-shadow:0 4px 0 rgba(0,0,0,.15); transition:transform .1s; line-height:1.3;
   }
-  .cat-btn small{display:block; font-weight:normal; opacity:.9; font-size:.75rem; margin-top:2px;}
   .cat-btn:active{transform:translateY(3px); box-shadow:0 1px 0 rgba(0,0,0,.15);}
   .cat-btn.all{grid-column:1/-1; background:linear-gradient(90deg,var(--purple),var(--pink)); font-size:1.05rem;}
   .cat-btn:disabled{opacity:.4; cursor:not-allowed;}
+  .cat-btn ruby rt{color:#fff; opacity:.85;}
 
   .hint{font-size:.85rem; color:#c92a2a; font-weight:bold; min-height:20px; margin-top:4px;}
 
@@ -60,8 +63,10 @@
 
   .cat-tag{display:inline-block; background:var(--blue); color:#fff; font-size:.75rem; padding:3px 10px; border-radius:12px; font-weight:bold; margin-bottom:10px;}
 
-  .question-jp{font-size:1.15rem; font-weight:bold; line-height:1.5; margin:6px 0 4px;}
-  .question-vn{font-size:.95rem; color:#6a5acd; font-style:italic; margin-bottom:16px; line-height:1.4;}
+  .q-img{background:#fafaff; border:2px solid #e5def7; border-radius:14px; padding:10px; margin-bottom:14px; text-align:center;}
+  .q-img svg{max-width:100%; height:auto;}
+
+  .question-jp{font-size:1.15rem; font-weight:bold; line-height:1.9; margin:6px 0 16px;}
 
   .choices{display:flex; flex-direction:column; gap:10px;}
   .choice-btn{
@@ -69,8 +74,6 @@
     padding:12px 14px; font-size:1rem; cursor:pointer; transition:.15s; display:flex; gap:10px; align-items:flex-start;
   }
   .choice-btn .badge{flex:0 0 auto; width:26px; height:26px; border-radius:50%; background:var(--purple); color:#fff; display:flex; align-items:center; justify-content:center; font-size:.85rem; font-weight:bold;}
-  .choice-btn .txt{display:flex; flex-direction:column;}
-  .choice-btn .txt .vn{font-size:.8rem; color:#888; font-style:italic;}
   .choice-btn:hover{border-color:var(--purple); background:#f2eeff;}
   .choice-btn:disabled{cursor:default;}
 
@@ -91,8 +94,8 @@
   .feedback .fb-title{font-weight:bold; font-size:1.1rem; margin-bottom:6px;}
   .feedback.correct .fb-title{color:#1a8f5a;}
   .feedback.wrong .fb-title{color:#c92a2a;}
-  .feedback .exp-jp{font-size:.95rem; margin-bottom:4px; line-height:1.5;}
-  .feedback .exp-vn{font-size:.88rem; color:#6a5acd; font-style:italic; line-height:1.5;}
+  .feedback .exp-jp{font-size:.95rem; margin-bottom:8px; line-height:1.9;}
+  .feedback .exp-vn{font-size:.88rem; color:#6a5acd; font-style:italic; line-height:1.5; border-top:1px dashed #d8cff5; padding-top:8px;}
 
   .next-btn{margin-top:16px; width:100%; padding:14px; border:none; border-radius:16px; background:linear-gradient(90deg,var(--purple),var(--pink)); color:#fff; font-size:1.05rem; font-weight:bold; cursor:pointer; box-shadow:0 5px 0 #5a3fc9;}
   .next-btn:active{transform:translateY(3px); box-shadow:0 2px 0 #5a3fc9;}
@@ -101,7 +104,6 @@
   .result-emoji{font-size:4rem; margin:6px 0;}
   .result-score{font-size:2.2rem; font-weight:bold; color:var(--purple); margin:6px 0;}
   .result-msg{font-size:1.1rem; font-weight:bold; margin:8px 0 4px; color:var(--dark);}
-  .result-msg-vn{font-size:.95rem; color:#6a5acd; font-style:italic; margin-bottom:16px;}
   .stars{font-size:2rem; letter-spacing:6px; margin:10px 0;}
   .retry-btns{display:flex; gap:10px; flex-wrap:wrap; justify-content:center; margin-top:10px;}
   .retry-btns button{border:none; border-radius:16px; padding:12px 20px; font-weight:bold; cursor:pointer; color:#fff; box-shadow:0 4px 0 rgba(0,0,0,.15); font-size:.95rem;}
@@ -124,67 +126,486 @@
 <div class="app">
   <div class="header">
     <div class="mascot">⚡🔧</div>
-    <h1>配電盤・制御盤 学科試験クイズ（基礎級・○×形式）</h1>
-    <p>Trò chơi ôn thi lý thuyết - Dạng Đúng/Sai theo đề thi thực tế</p>
+    <h1><ruby>配電盤<rt>はいでんばん</rt></ruby>・<ruby>制御盤<rt>せいぎょばん</rt></ruby> <ruby>学科試験<rt>がっかしけん</rt></ruby>クイズ（<ruby>基礎級<rt>きそきゅう</rt></ruby>・○×<ruby>形式<rt>けいしき</rt></ruby>）</h1>
   </div>
 
   <div class="card" id="card"></div>
-  <footer>技能実習評価試験（基礎級）電気機器組立て職種 学習用オリジナル問題 ／ Bộ câu hỏi tự soạn để luyện tập, không phải đề thi chính thức</footer>
+  <footer><ruby>技能実習評価試験<rt>ぎのうじっしゅうひょうかしけん</rt></ruby>（<ruby>基礎級<rt>きそきゅう</rt></ruby>）<ruby>電気機器組立<rt>でんききききくみたて</rt></ruby>て<ruby>職種<rt>しょくしゅ</rt></ruby> <ruby>学習用<rt>がくしゅうよう</rt></ruby>オリジナル<ruby>問題<rt>もんだい</rt></ruby></footer>
 </div>
 
 <script>
 const QUESTIONS = [
-{"id": 1, "cat_jp": "1. 電気の基礎", "cat_vn": "Kiến thức cơ bản về điện", "type": "OX", "q_jp": "直流電動機の界磁コイルは、磁界をつくるための巻線である。", "q_vn": "Cuộn dây từ trường (field coil) của động cơ điện một chiều là cuộn dây dùng để tạo ra từ trường.", "answer": "○", "exp_jp": "界磁コイルは固定子側にあり、電流を流すことで磁界を発生させる役割を持つ。", "exp_vn": "Cuộn dây từ trường nằm ở phía stator (phần tĩnh), có vai trò tạo ra từ trường khi có dòng điện chạy qua."},
-{"id": 2, "cat_jp": "1. 電気の基礎", "cat_vn": "Kiến thức cơ bản về điện", "type": "OX", "q_jp": "誘導電動機は、一般に交流電源に接続して使用する。", "q_vn": "Động cơ không đồng bộ (cảm ứng) thường được sử dụng bằng cách nối với nguồn điện xoay chiều.", "answer": "○", "exp_jp": "誘導電動機は交流による回転磁界を利用して回転する仕組みのため、交流電源で使用する。", "exp_vn": "Động cơ cảm ứng hoạt động dựa trên từ trường quay sinh ra từ dòng điện xoay chiều, nên được dùng với nguồn điện xoay chiều."},
-{"id": 3, "cat_jp": "1. 電気の基礎", "cat_vn": "Kiến thức cơ bản về điện", "type": "OX", "q_jp": "コンデンサは、直流電圧を加えて十分に充電された後は、電流をほとんど流さなくなる。", "q_vn": "Tụ điện, sau khi được nạp đầy bằng điện áp một chiều, sẽ gần như không cho dòng điện đi qua nữa.", "answer": "○", "exp_jp": "コンデンサは直流に対しては充電完了後に電流を遮断する性質を持ち、交流に対しては電流を通す性質を持つ。", "exp_vn": "Tụ điện có tính chất chặn dòng điện một chiều sau khi nạp đầy, nhưng lại cho dòng điện xoay chiều đi qua."},
-{"id": 4, "cat_jp": "1. 電気の基礎", "cat_vn": "Kiến thức cơ bản về điện", "type": "OX", "q_jp": "一定の電圧が加わっている回路で抵抗の値を大きくすると、流れる電流は小さくなる。", "q_vn": "Trong mạch có điện áp không đổi, nếu tăng giá trị điện trở thì dòng điện chạy qua sẽ giảm.", "answer": "○", "exp_jp": "オームの法則（I=V/R）より、電圧が一定であれば抵抗が大きいほど電流は小さくなる。", "exp_vn": "Theo định luật Ohm (I=V/R), nếu điện áp không đổi thì điện trở càng lớn, dòng điện càng nhỏ."},
-{"id": 5, "cat_jp": "1. 電気の基礎", "cat_vn": "Kiến thức cơ bản về điện", "type": "OX", "q_jp": "抵抗を直列に接続すると、回路全体の合成抵抗は各抵抗の値の和になる。", "q_vn": "Khi mắc nối tiếp các điện trở, điện trở tổng của toàn mạch bằng tổng các giá trị điện trở thành phần.", "answer": "○", "exp_jp": "直列接続の合成抵抗はR1+R2+…のように単純な足し算で求められる。", "exp_vn": "Điện trở tổng khi mắc nối tiếp được tính đơn giản bằng R1+R2+…"},
-{"id": 6, "cat_jp": "1. 電気の基礎", "cat_vn": "Kiến thức cơ bản về điện", "type": "OX", "q_jp": "コイルに流れる電流の向きを逆にしても、コイルの周りにできる磁界の向きは変わらない。", "q_vn": "Ngay cả khi đảo chiều dòng điện chạy trong cuộn dây, chiều từ trường sinh ra quanh cuộn dây cũng không thay đổi.", "answer": "×", "exp_jp": "電流の向きを変えると、右手の法則により磁界の向きも逆になる。", "exp_vn": "Khi đảo chiều dòng điện, theo quy tắc bàn tay phải, chiều từ trường cũng sẽ đảo ngược."},
-{"id": 7, "cat_jp": "1. 電気の基礎", "cat_vn": "Kiến thức cơ bản về điện", "type": "OX", "q_jp": "電力[W]は、電圧[V]と電流[A]の積によって求めることができる。", "q_vn": "Công suất điện [W] có thể tính bằng tích của điện áp [V] và dòng điện [A].", "answer": "○", "exp_jp": "P=VIの式で表され、電力を求める基本的な計算式である。", "exp_vn": "Được biểu diễn bằng công thức P=VI, đây là công thức cơ bản để tính công suất điện."},
-{"id": 8, "cat_jp": "1. 電気の基礎", "cat_vn": "Kiến thức cơ bản về điện", "type": "OX", "q_jp": "交流の周波数とは、1秒間に繰り返される波形（サイクル）の数のことである。", "q_vn": "Tần số của dòng điện xoay chiều là số lần dạng sóng (chu kỳ) lặp lại trong 1 giây.", "answer": "○", "exp_jp": "周波数の単位はHz（ヘルツ）で表され、日本では主に50Hzまたは60Hzが使われている。", "exp_vn": "Đơn vị của tần số là Hz (Hertz), tại Nhật Bản chủ yếu sử dụng tần số 50Hz hoặc 60Hz."},
-{"id": 9, "cat_jp": "1. 電気の基礎", "cat_vn": "Kiến thức cơ bản về điện", "type": "OX", "q_jp": "電流計は、電流を測定したい回路に対して並列に接続して使用する。", "q_vn": "Ampe kế được sử dụng bằng cách mắc song song với mạch cần đo dòng điện.", "answer": "×", "exp_jp": "電流計は回路に対して直列に接続して使用する。並列に接続すると大電流が流れ、機器の破損や事故につながる危険がある。", "exp_vn": "Ampe kế phải được mắc nối tiếp với mạch điện. Nếu mắc song song, dòng điện lớn sẽ chạy qua, có thể làm hỏng thiết bị hoặc gây sự cố."},
-{"id": 10, "cat_jp": "1. 電気の基礎", "cat_vn": "Kiến thức cơ bản về điện", "type": "OX", "q_jp": "電圧計は、電圧を測定したい部分に対して並列に接続して使用する。", "q_vn": "Vôn kế được sử dụng bằng cách mắc song song với phần cần đo điện áp.", "answer": "○", "exp_jp": "電圧計は測定したい箇所に対して並列に接続する。直列に接続すると正しく測定できない。", "exp_vn": "Vôn kế được mắc song song với phần cần đo. Nếu mắc nối tiếp sẽ không đo được chính xác."},
-{"id": 11, "cat_jp": "2. 工具・器具", "cat_vn": "Dụng cụ, đồ nghề", "type": "OX", "q_jp": "ラチェット式の圧着工具は、圧着が完了するまでハンドルを開くことができない構造になっている。", "q_vn": "Kìm bấm cốt kiểu cóc (ratchet) có cấu tạo không thể mở tay cầm cho đến khi hoàn tất việc ép.", "answer": "○", "exp_jp": "圧着が不完全なまま外れてしまうことを防ぐための安全機構である。", "exp_vn": "Đây là cơ chế an toàn nhằm ngăn việc tháo ra khi chưa ép xong hoàn toàn."},
-{"id": 12, "cat_jp": "2. 工具・器具", "cat_vn": "Dụng cụ, đồ nghề", "type": "OX", "q_jp": "ノギスは、一般に0.05mm程度の精度で寸法を測定できる工具である。", "q_vn": "Thước cặp (nogisu) thường là dụng cụ có thể đo kích thước với độ chính xác khoảng 0.05mm.", "answer": "○", "exp_jp": "ノギスは主尺と副尺（バーニヤ）を用いて0.05mm単位まで読み取れる。0.01mm単位の測定にはマイクロメータを用いる。", "exp_vn": "Thước cặp dùng thước chính và thước phụ (vernier) để đọc đến đơn vị 0.05mm. Để đo đến đơn vị 0.01mm cần dùng panme (micrometer)."},
-{"id": 13, "cat_jp": "2. 工具・器具", "cat_vn": "Dụng cụ, đồ nghề", "type": "OX", "q_jp": "マイクロメータは、ノギスよりも精密な寸法測定ができる工具である。", "q_vn": "Panme (micrometer) là dụng cụ có thể đo kích thước chính xác hơn thước cặp.", "answer": "○", "exp_jp": "マイクロメータは一般に0.01mm程度、あるいはそれ以上の精度で測定できる。", "exp_vn": "Panme thường có thể đo với độ chính xác khoảng 0.01mm hoặc cao hơn."},
-{"id": 14, "cat_jp": "2. 工具・器具", "cat_vn": "Dụng cụ, đồ nghề", "type": "OX", "q_jp": "ばね座金（スプリングワッシャー）は、振動などによるボルト・ナットの緩みを防止するために使用する。", "q_vn": "Vòng đệm lò xo (spring washer) được sử dụng để ngăn bu lông, đai ốc bị lỏng do rung động, v.v.", "answer": "○", "exp_jp": "弾性力によって締結部にゆるみが生じるのを防ぐ役割がある。", "exp_vn": "Nhờ lực đàn hồi, giúp ngăn ngừa phần liên kết bị lỏng ra."},
-{"id": 15, "cat_jp": "2. 工具・器具", "cat_vn": "Dụng cụ, đồ nghề", "type": "OX", "q_jp": "トルクレンチは、ボルトやナットを規定の力で締め付けるために使用する工具である。", "q_vn": "Cờ lê lực (torque wrench) là dụng cụ dùng để siết bu lông, đai ốc với lực siết theo quy định.", "answer": "○", "exp_jp": "締め付け不足や締めすぎを防ぐために使用する。", "exp_vn": "Được sử dụng để tránh siết quá lỏng hoặc quá chặt."},
-{"id": 16, "cat_jp": "2. 工具・器具", "cat_vn": "Dụng cụ, đồ nghề", "type": "OX", "q_jp": "電気ドリルで穴あけ加工を行うときは、手袋を着用したほうが安全である。", "q_vn": "Khi khoan lỗ bằng máy khoan điện, nên đeo găng tay để đảm bảo an toàn.", "answer": "×", "exp_jp": "手袋が回転部に巻き込まれる危険があるため、回転する電動工具を使用する際は手袋を着用しないのが原則である。", "exp_vn": "Găng tay có nguy cơ bị cuốn vào bộ phận quay, nên nguyên tắc là không đeo găng tay khi sử dụng dụng cụ điện có bộ phận quay."},
-{"id": 17, "cat_jp": "2. 工具・器具", "cat_vn": "Dụng cụ, đồ nghề", "type": "OX", "q_jp": "スパナは、ボルトやナットのサイズに合ったものを選んで使用する必要がある。", "q_vn": "Cờ lê phải được chọn phù hợp với kích thước của bu lông, đai ốc khi sử dụng.", "answer": "○", "exp_jp": "サイズが合わないと十分な力がかからず、ボルトやナットを傷める原因になる。", "exp_vn": "Nếu không đúng kích thước sẽ không tạo đủ lực và có thể làm hỏng bu lông, đai ốc."},
-{"id": 18, "cat_jp": "2. 工具・器具", "cat_vn": "Dụng cụ, đồ nghề", "type": "OX", "q_jp": "ワイヤストリッパは、電線の心線を切断するための工具であり、被覆をむく用途には使用できない。", "q_vn": "Kìm tuốt dây (wire stripper) là dụng cụ để cắt đứt lõi dây điện và không thể dùng để tuốt vỏ bọc.", "answer": "×", "exp_jp": "ワイヤストリッパは、電線の被覆を一定の長さでむくための工具である。", "exp_vn": "Kìm tuốt dây là dụng cụ dùng để tuốt vỏ bọc dây điện với độ dài nhất định."},
-{"id": 19, "cat_jp": "2. 工具・器具", "cat_vn": "Dụng cụ, đồ nghề", "type": "OX", "q_jp": "けがき針は、金属材料に加工位置の線を引くために使用する工具である。", "q_vn": "Kim vạch dấu (kegaki) là dụng cụ dùng để vạch đường vị trí gia công lên vật liệu kim loại.", "answer": "○", "exp_jp": "正確な加工を行うため、あらかじめけがき線を引いておく。", "exp_vn": "Để gia công chính xác, cần vạch đường trước khi thực hiện."},
-{"id": 20, "cat_jp": "2. 工具・器具", "cat_vn": "Dụng cụ, đồ nghề", "type": "OX", "q_jp": "グラインダを使用するときは、保護めがねを着用する必要はない。", "q_vn": "Khi sử dụng máy mài (grinder), không cần đeo kính bảo hộ.", "answer": "×", "exp_jp": "研削中に飛び散る火花や粉じんから目を守るため、保護めがねの着用が必須である。", "exp_vn": "Để bảo vệ mắt khỏi tia lửa và bụi bắn ra trong quá trình mài, bắt buộc phải đeo kính bảo hộ."},
-{"id": 21, "cat_jp": "3. 材料", "cat_vn": "Vật liệu", "type": "OX", "q_jp": "空気は、一般に電気を通しにくい絶縁体としての性質を持つ。", "q_vn": "Không khí nhìn chung có tính chất là vật cách điện, khó dẫn điện.", "answer": "○", "exp_jp": "空気は通常の状態では電気をほとんど通さないため、絶縁体として扱われる。", "exp_vn": "Trong điều kiện bình thường, không khí hầu như không dẫn điện nên được coi là vật cách điện."},
-{"id": 22, "cat_jp": "3. 材料", "cat_vn": "Vật liệu", "type": "OX", "q_jp": "ガラスやマイカは、絶縁材料として利用される。", "q_vn": "Thủy tinh và mica được sử dụng làm vật liệu cách điện.", "answer": "○", "exp_jp": "ガラス、マイカ、ワニスなどは電気を通しにくいため絶縁材料として広く使われる。", "exp_vn": "Thủy tinh, mica, vecni v.v. khó dẫn điện nên được sử dụng rộng rãi làm vật liệu cách điện."},
-{"id": 23, "cat_jp": "3. 材料", "cat_vn": "Vật liệu", "type": "OX", "q_jp": "絶縁電線とは、導体（心線）の表面を絶縁材料で覆った電線のことである。", "q_vn": "Dây điện cách điện là dây điện có bề mặt lõi dẫn được bọc bằng vật liệu cách điện.", "answer": "○", "exp_jp": "感電や短絡を防ぐため、導体の周りを絶縁材料で覆っている。", "exp_vn": "Để phòng chống điện giật và đoản mạch, phần lõi dẫn được bọc bằng vật liệu cách điện xung quanh."},
-{"id": 24, "cat_jp": "3. 材料", "cat_vn": "Vật liệu", "type": "OX", "q_jp": "銅は、一般的な金属の中で電気を最も通しにくい部類に入る。", "q_vn": "Đồng thuộc nhóm kim loại khó dẫn điện nhất trong các kim loại thông thường.", "answer": "×", "exp_jp": "銅は電気抵抗が小さく、電気を通しやすい代表的な導電材料である。", "exp_vn": "Đồng có điện trở nhỏ, là vật liệu dẫn điện tiêu biểu, dễ dẫn điện."},
-{"id": 25, "cat_jp": "3. 材料", "cat_vn": "Vật liệu", "type": "OX", "q_jp": "ゴムは、絶縁材料として電線の被覆などに利用される。", "q_vn": "Cao su được sử dụng làm vật liệu cách điện, chẳng hạn như vỏ bọc dây điện.", "answer": "○", "exp_jp": "ゴムは電気を通しにくい性質を持ち、絶縁被覆材として使用される。", "exp_vn": "Cao su có tính chất khó dẫn điện nên được dùng làm vật liệu bọc cách điện."},
-{"id": 26, "cat_jp": "3. 材料", "cat_vn": "Vật liệu", "type": "OX", "q_jp": "鉄は、銅よりも導電率が高い金属である。", "q_vn": "Sắt là kim loại có độ dẫn điện cao hơn đồng.", "answer": "×", "exp_jp": "鉄は銅よりも電気抵抗が大きく、導電率は銅より低い。", "exp_vn": "Sắt có điện trở lớn hơn đồng, độ dẫn điện thấp hơn đồng."},
-{"id": 27, "cat_jp": "3. 材料", "cat_vn": "Vật liệu", "type": "OX", "q_jp": "磁性材料は、磁石に引き寄せられやすい性質を持つ材料のことである。", "q_vn": "Vật liệu từ tính là loại vật liệu có tính chất dễ bị nam châm hút.", "answer": "○", "exp_jp": "鉄やニッケルなど、磁界の影響を強く受ける材料を磁性材料という。", "exp_vn": "Sắt, niken v.v., những vật liệu chịu ảnh hưởng mạnh của từ trường được gọi là vật liệu từ tính."},
-{"id": 28, "cat_jp": "3. 材料", "cat_vn": "Vật liệu", "type": "OX", "q_jp": "IV電線は、主に屋外の高圧配電線として使用される電線である。", "q_vn": "Dây điện IV chủ yếu được sử dụng làm dây phân phối điện áp cao ngoài trời.", "answer": "×", "exp_jp": "IV電線は、一般に屋内配線や制御盤内配線などの低圧配線用電線として使用される。", "exp_vn": "Dây điện IV thường được sử dụng làm dây điện áp thấp cho đấu dây trong nhà hoặc trong tủ điều khiển."},
-{"id": 29, "cat_jp": "4. 配線作業", "cat_vn": "Công việc đấu dây", "type": "OX", "q_jp": "配線作業では、直流回路と交流回路の配線を分けて行うのが基本である。", "q_vn": "Trong công việc đấu dây, về cơ bản cần tách riêng đấu dây của mạch điện một chiều và mạch điện xoay chiều.", "answer": "○", "exp_jp": "誤配線や事故防止のため、直流回路と交流回路は明確に区別して配線する。", "exp_vn": "Để phòng tránh đấu nhầm và sự cố, cần phân biệt rõ ràng khi đấu dây mạch một chiều và mạch xoay chiều."},
-{"id": 30, "cat_jp": "4. 配線作業", "cat_vn": "Công việc đấu dây", "type": "OX", "q_jp": "電線の接続部分は、絶縁処理をしなくても特に問題はない。", "q_vn": "Phần đấu nối dây điện không cần xử lý cách điện cũng không có vấn đề gì đặc biệt.", "answer": "×", "exp_jp": "接続部分は絶縁テープなどで確実に絶縁処理をしないと、感電や短絡の原因になる。", "exp_vn": "Nếu không xử lý cách điện chắc chắn bằng băng cách điện v.v. cho phần đấu nối, sẽ gây ra điện giật hoặc đoản mạch."},
-{"id": 31, "cat_jp": "4. 配線作業", "cat_vn": "Công việc đấu dây", "type": "OX", "q_jp": "停止を目的とするボタンスイッチには、一般的に赤色が使われる。", "q_vn": "Nút bấm dùng cho mục đích dừng thường sử dụng màu đỏ.", "answer": "○", "exp_jp": "停止(ストップ)ボタンには赤色、運転(スタート)ボタンには緑色が一般的に使われる。", "exp_vn": "Nút dừng (stop) thường dùng màu đỏ, nút chạy (start) thường dùng màu xanh lá."},
-{"id": 32, "cat_jp": "4. 配線作業", "cat_vn": "Công việc đấu dây", "type": "OX", "q_jp": "運転（始動）を目的とするボタンスイッチには、一般的に赤色が使われる。", "q_vn": "Nút bấm dùng cho mục đích khởi động (vận hành) thường sử dụng màu đỏ.", "answer": "×", "exp_jp": "一般的に、運転(スタート)ボタンには緑色、停止(ストップ)ボタンには赤色が使われる。", "exp_vn": "Thông thường, nút chạy (start) dùng màu xanh lá, nút dừng (stop) dùng màu đỏ."},
-{"id": 33, "cat_jp": "4. 配線作業", "cat_vn": "Công việc đấu dây", "type": "OX", "q_jp": "接地線（アース線）には、他の電線と区別するために緑色が使われることが多い。", "q_vn": "Dây tiếp địa (dây đất) thường được dùng màu xanh lá để phân biệt với các dây điện khác.", "answer": "○", "exp_jp": "感電防止のための重要な線であるため、色分けにより誤配線を防いでいる。", "exp_vn": "Vì đây là dây quan trọng để phòng chống điện giật, nên việc phân biệt màu giúp tránh đấu nhầm."},
-{"id": 34, "cat_jp": "4. 配線作業", "cat_vn": "Công việc đấu dây", "type": "OX", "q_jp": "より線の電線を端子台に接続する際は、心線がばらけたままねじで締め付けてもよい。", "q_vn": "Khi đấu dây bện vào cầu đấu dây, có thể siết vít trong khi lõi dây vẫn còn bung rời.", "answer": "×", "exp_jp": "心線がばらけたまま接続すると接触不良や短絡の原因になるため、より合わせるか圧着端子を使用する必要がある。", "exp_vn": "Nếu đấu nối khi lõi dây còn bung rời sẽ gây tiếp xúc kém hoặc đoản mạch, nên cần xoắn lại hoặc dùng đầu cốt ép."},
-{"id": 35, "cat_jp": "4. 配線作業", "cat_vn": "Công việc đấu dây", "type": "OX", "q_jp": "配線図で電線が交差している箇所には、必ず黒丸（接続点）が描かれる。", "q_vn": "Ở chỗ dây điện giao nhau trong sơ đồ đấu dây, luôn luôn có chấm đen (điểm nối) được vẽ.", "answer": "×", "exp_jp": "実際に電気的に接続されている箇所にのみ黒丸を描く。単に線が交差しているだけの場合は黒丸を描かない。", "exp_vn": "Chấm đen chỉ được vẽ ở chỗ thực sự được kết nối về điện. Nếu chỉ là các đường giao nhau thì không có chấm đen."},
-{"id": 36, "cat_jp": "4. 配線作業", "cat_vn": "Công việc đấu dây", "type": "OX", "q_jp": "通電前には、配線に誤りがないかをテスタなどで確認することが望ましい。", "q_vn": "Trước khi cấp điện, nên kiểm tra xem đấu dây có sai sót gì không bằng đồng hồ vạn năng v.v.", "answer": "○", "exp_jp": "目視だけでは見落としがあるため、通電前の導通確認は事故防止の観点から重要である。", "exp_vn": "Vì chỉ kiểm tra bằng mắt có thể bỏ sót, nên việc kiểm tra thông mạch trước khi cấp điện rất quan trọng để phòng tránh sự cố."},
-{"id": 37, "cat_jp": "5. 盤の構成機器", "cat_vn": "Thiết bị cấu thành tủ điện", "type": "OX", "q_jp": "配線用遮断器（ブレーカ）は、過電流や短絡から回路を保護するための機器である。", "q_vn": "Aptomat (bộ ngắt mạch) là thiết bị dùng để bảo vệ mạch điện khỏi quá tải và ngắn mạch.", "answer": "○", "exp_jp": "定格を超える電流が流れると、自動的に回路を遮断するしくみになっている。", "exp_vn": "Khi có dòng điện vượt quá định mức chạy qua, thiết bị sẽ tự động ngắt mạch."},
-{"id": 38, "cat_jp": "5. 盤の構成機器", "cat_vn": "Thiết bị cấu thành tủ điện", "type": "OX", "q_jp": "表示灯は、電源や機器の状態を作業者に知らせるために使用される。", "q_vn": "Đèn báo được sử dụng để thông báo tình trạng nguồn điện hoặc thiết bị cho người vận hành.", "answer": "○", "exp_jp": "点灯・消灯の状態によって、運転状態や異常の有無を表示する。", "exp_vn": "Thông qua trạng thái sáng/tắt, đèn báo hiển thị tình trạng vận hành hoặc có bất thường hay không."},
-{"id": 39, "cat_jp": "5. 盤の構成機器", "cat_vn": "Thiết bị cấu thành tủ điện", "type": "OX", "q_jp": "端子台は、電線同士や機器と電線を接続するための部品である。", "q_vn": "Cầu đấu dây (terminal block) là linh kiện dùng để đấu nối dây điện với nhau hoặc dây điện với thiết bị.", "answer": "○", "exp_jp": "複数の電線を安全かつ確実に接続・分岐するために用いられる。", "exp_vn": "Được sử dụng để đấu nối và phân nhánh nhiều dây điện một cách an toàn, chắc chắn."},
-{"id": 40, "cat_jp": "5. 盤の構成機器", "cat_vn": "Thiết bị cấu thành tủ điện", "type": "OX", "q_jp": "継電器（リレー）は、大電流の負荷を直接開閉するために使用され、制御回路には使用されない。", "q_vn": "Rơ le được sử dụng để đóng/mở trực tiếp tải dòng điện lớn, không được dùng cho mạch điều khiển.", "answer": "×", "exp_jp": "リレーは主に制御回路の信号切り替えに使用され、大電流の開閉には電磁接触器などが用いられる。", "exp_vn": "Rơ le chủ yếu dùng để chuyển đổi tín hiệu trong mạch điều khiển; việc đóng/mở dòng điện lớn thường dùng công tắc tơ điện từ, v.v."},
-{"id": 41, "cat_jp": "5. 盤の構成機器", "cat_vn": "Thiết bị cấu thành tủ điện", "type": "OX", "q_jp": "電力量計は、消費した電力量を積算して表示する計器である。", "q_vn": "Công tơ điện là thiết bị đo tích lũy và hiển thị lượng điện năng đã tiêu thụ.", "answer": "○", "exp_jp": "一定期間に使用した電力の総量を計測するための計器である。", "exp_vn": "Là thiết bị đo tổng lượng điện đã sử dụng trong một khoảng thời gian nhất định."},
-{"id": 42, "cat_jp": "5. 盤の構成機器", "cat_vn": "Thiết bị cấu thành tủ điện", "type": "OX", "q_jp": "端子台のねじは、電線が抜けなければどれだけ強く締め付けてもよい。", "q_vn": "Vít của cầu đấu dây có thể siết mạnh bao nhiêu tùy ý miễn là dây điện không bị tuột ra.", "answer": "×", "exp_jp": "締めすぎると心線の損傷や端子の破損につながるため、規定のトルクで締め付ける必要がある。", "exp_vn": "Nếu siết quá chặt sẽ làm hỏng lõi dây hoặc cực đấu dây, nên cần siết đúng lực quy định."},
-{"id": 43, "cat_jp": "6. 安全衛生", "cat_vn": "An toàn vệ sinh lao động", "type": "OX", "q_jp": "保護帽（ヘルメット）の顎紐がきついときは、緩めて正しく調整するのがよい。", "q_vn": "Khi dây quai của mũ bảo hộ quá chặt, nên nới lỏng và điều chỉnh đúng cách.", "answer": "○", "exp_jp": "きつすぎる場合は緩め、緩すぎる場合は締めて、常に正しく装着することが重要である。", "exp_vn": "Nếu quá chặt thì nới lỏng, nếu quá lỏng thì siết chặt lại, luôn đội đúng cách là điều quan trọng."},
-{"id": 44, "cat_jp": "6. 安全衛生", "cat_vn": "An toàn vệ sinh lao động", "type": "OX", "q_jp": "「立入禁止」の標識があるところには、用事がなくても自由に入ってよい。", "q_vn": "Ở nơi có biển \"cấm vào\", có thể tự do vào dù không có việc gì.", "answer": "×", "exp_jp": "立入禁止の標識がある場所は危険を伴うため、許可なく立ち入ってはならない。", "exp_vn": "Nơi có biển cấm vào tiềm ẩn nguy hiểm, không được tự ý vào khi chưa được phép."},
-{"id": 45, "cat_jp": "6. 安全衛生", "cat_vn": "An toàn vệ sinh lao động", "type": "OX", "q_jp": "「火気厳禁」の標識があるところでは、たばこを吸ってはいけない。", "q_vn": "Ở nơi có biển \"cấm lửa\", không được hút thuốc.", "answer": "○", "exp_jp": "引火・爆発の危険があるため、火気厳禁の場所での喫煙は厳禁である。", "exp_vn": "Vì có nguy cơ bắt lửa, nổ, nên việc hút thuốc ở nơi cấm lửa là tuyệt đối cấm."},
-{"id": 46, "cat_jp": "6. 安全衛生", "cat_vn": "An toàn vệ sinh lao động", "type": "OX", "q_jp": "機械を清掃するときは、機械のスイッチを切ってから行う必要がある。", "q_vn": "Khi vệ sinh máy móc, cần tắt công tắc máy trước khi thực hiện.", "answer": "○", "exp_jp": "運転中の清掃は、巻き込まれ事故など重大な災害につながる危険がある。", "exp_vn": "Vệ sinh khi máy đang chạy có nguy cơ dẫn đến tai nạn nghiêm trọng như bị cuốn vào máy."},
-{"id": 47, "cat_jp": "6. 安全衛生", "cat_vn": "An toàn vệ sinh lao động", "type": "OX", "q_jp": "グラインダの砥石を交換した場合、すぐに通常の作業に使用してよい。", "q_vn": "Sau khi thay đá mài của máy mài, có thể sử dụng ngay cho công việc bình thường.", "answer": "×", "exp_jp": "砥石交換後は、破損や異常がないかを確認するため、必ず試運転を行う必要がある。", "exp_vn": "Sau khi thay đá mài, bắt buộc phải chạy thử để kiểm tra xem có hư hỏng hay bất thường không."},
-{"id": 48, "cat_jp": "6. 安全衛生", "cat_vn": "An toàn vệ sinh lao động", "type": "OX", "q_jp": "労働災害を防ぐためには、作業前に手順や周囲の安全を確認することが重要である。", "q_vn": "Để phòng ngừa tai nạn lao động, việc xác nhận quy trình và an toàn xung quanh trước khi làm việc là rất quan trọng.", "answer": "○", "exp_jp": "事前確認を怠ると、思わぬ事故につながるおそれがある。", "exp_vn": "Nếu bỏ qua việc kiểm tra trước, có thể dẫn đến tai nạn ngoài ý muốn."},
-{"id": 49, "cat_jp": "6. 安全衛生", "cat_vn": "An toàn vệ sinh lao động", "type": "OX", "q_jp": "電動工具を使用する前には、コードや本体に損傷がないか点検する必要はない。", "q_vn": "Trước khi sử dụng dụng cụ điện, không cần kiểm tra xem dây điện hoặc thân máy có bị hỏng hay không.", "answer": "×", "exp_jp": "損傷があると感電や火災の原因となるため、使用前の点検は必須である。", "exp_vn": "Nếu có hư hỏng sẽ gây ra điện giật hoặc cháy nổ, nên việc kiểm tra trước khi sử dụng là bắt buộc."},
-{"id": 50, "cat_jp": "6. 安全衛生", "cat_vn": "An toàn vệ sinh lao động", "type": "OX", "q_jp": "整理整頓（5S）は、作業の安全性向上にも役立つ活動である。", "q_vn": "Sắp xếp gọn gàng (5S) là hoạt động cũng giúp nâng cao tính an toàn trong công việc.", "answer": "○", "exp_jp": "通路や作業スペースを整理することで、つまずきや転倒などの事故を防止できる。", "exp_vn": "Nhờ việc sắp xếp lối đi và không gian làm việc, có thể phòng tránh các tai nạn như vấp ngã."}
+ {
+  "id": 1,
+  "cat_jp": "1. 電気の基礎",
+  "type": "OX",
+  "q_jp": "<ruby>直流<rt>ちょくりゅう</rt></ruby><ruby>電動<rt>でんどう</rt></ruby><ruby>機<rt>き</rt></ruby>の<ruby>界磁<rt>かいじ</rt></ruby>コイルは、<ruby>磁界<rt>じかい</rt></ruby>をつくるための<ruby>巻線<rt>まきせん</rt></ruby>である。",
+  "answer": "○",
+  "exp_jp": "<ruby>界磁<rt>かいじ</rt></ruby>コイルは<ruby>固定<rt>こてい</rt></ruby><ruby>子<rt>し</rt></ruby><ruby>側<rt>がわ</rt></ruby>にあり、<ruby>電流<rt>でんりゅう</rt></ruby>を<ruby>流す<rt>ながす</rt></ruby>ことで<ruby>磁界<rt>じかい</rt></ruby>を<ruby>発生<rt>はっせい</rt></ruby>させる<ruby>役割<rt>やくわり</rt></ruby>を<ruby>持つ<rt>もつ</rt></ruby>。",
+  "exp_vn": "Cuộn dây từ trường nằm ở phía stator (phần tĩnh), có vai trò tạo ra từ trường khi có dòng điện chạy qua.",
+  "img": "<svg viewBox='0 0 300 180' xmlns='http://www.w3.org/2000/svg'><rect x='20' y='20' width='260' height='140' rx='10' fill='none' stroke='#2d2a4a' stroke-width='2'/><rect x='95' y='20' width='110' height='22' fill='#ffd23f' stroke='#2d2a4a' stroke-width='1.5'/><text x='150' y='35' font-size='11' text-anchor='middle' fill='#2d2a4a'>界磁コイル</text><rect x='95' y='138' width='110' height='22' fill='#ffd23f' stroke='#2d2a4a' stroke-width='1.5'/><text x='150' y='153' font-size='11' text-anchor='middle' fill='#2d2a4a'>界磁コイル</text><circle cx='150' cy='95' r='45' fill='#fff' stroke='#2d2a4a' stroke-width='2'/><text x='150' y='90' font-size='11' text-anchor='middle' fill='#7b5cff'>電機子</text><text x='150' y='104' font-size='11' text-anchor='middle' fill='#7b5cff'>コイル</text></svg>"
+ },
+ {
+  "id": 2,
+  "cat_jp": "1. 電気の基礎",
+  "type": "OX",
+  "q_jp": "<ruby>誘導<rt>ゆうどう</rt></ruby><ruby>電動<rt>でんどう</rt></ruby><ruby>機<rt>き</rt></ruby>は、<ruby>一般<rt>いっぱん</rt></ruby>に<ruby>交流<rt>こうりゅう</rt></ruby><ruby>電源<rt>でんげん</rt></ruby>に<ruby>接続<rt>せつぞく</rt></ruby>して<ruby>使用<rt>しよう</rt></ruby>する。",
+  "answer": "○",
+  "exp_jp": "<ruby>誘導<rt>ゆうどう</rt></ruby><ruby>電動<rt>でんどう</rt></ruby><ruby>機<rt>き</rt></ruby>は<ruby>交流<rt>こうりゅう</rt></ruby>による<ruby>回転<rt>かいてん</rt></ruby><ruby>磁界<rt>じかい</rt></ruby>を<ruby>利用<rt>りよう</rt></ruby>して<ruby>回転<rt>かいてん</rt></ruby>する<ruby>仕組み<rt>しくみ</rt></ruby>のため、<ruby>交流<rt>こうりゅう</rt></ruby><ruby>電源<rt>でんげん</rt></ruby>で<ruby>使用<rt>しよう</rt></ruby>する。",
+  "exp_vn": "Động cơ cảm ứng hoạt động dựa trên từ trường quay sinh ra từ dòng điện xoay chiều, nên được dùng với nguồn điện xoay chiều."
+ },
+ {
+  "id": 3,
+  "cat_jp": "1. 電気の基礎",
+  "type": "OX",
+  "q_jp": "コンデンサは、<ruby>直流<rt>ちょくりゅう</rt></ruby><ruby>電圧<rt>でんあつ</rt></ruby>を<ruby>加え<rt>くわえ</rt></ruby>て<ruby>十分<rt>じゅうぶん</rt></ruby>に<ruby>充電<rt>じゅうでん</rt></ruby>された<ruby>後<rt>あと</rt></ruby>は、<ruby>電流<rt>でんりゅう</rt></ruby>をほとんど<ruby>流さ<rt>ながさ</rt></ruby>なくなる。",
+  "answer": "○",
+  "exp_jp": "コンデンサは<ruby>直流<rt>ちょくりゅう</rt></ruby>に<ruby>対し<rt>たいし</rt></ruby>ては<ruby>充電<rt>じゅうでん</rt></ruby><ruby>完了<rt>かんりょう</rt></ruby><ruby>後<rt>ご</rt></ruby>に<ruby>電流<rt>でんりゅう</rt></ruby>を<ruby>遮断<rt>しゃだん</rt></ruby>する<ruby>性質<rt>せいしつ</rt></ruby>を<ruby>持ち<rt>もち</rt></ruby>、<ruby>交流<rt>こうりゅう</rt></ruby>に<ruby>対し<rt>たいし</rt></ruby>ては<ruby>電流<rt>でんりゅう</rt></ruby>を<ruby>通す<rt>とおす</rt></ruby><ruby>性質<rt>せいしつ</rt></ruby>を<ruby>持つ<rt>もつ</rt></ruby>。",
+  "exp_vn": "Tụ điện có tính chất chặn dòng điện một chiều sau khi nạp đầy, nhưng lại cho dòng điện xoay chiều đi qua."
+ },
+ {
+  "id": 4,
+  "cat_jp": "1. 電気の基礎",
+  "type": "OX",
+  "q_jp": "<ruby>一定<rt>いってい</rt></ruby>の<ruby>電圧<rt>でんあつ</rt></ruby>が<ruby>加わっ<rt>くわわっ</rt></ruby>ている<ruby>回路<rt>かいろ</rt></ruby>で<ruby>抵抗<rt>ていこう</rt></ruby>の<ruby>値<rt>あたい</rt></ruby>を<ruby>大きく<rt>おおきく</rt></ruby>すると、<ruby>流れる<rt>ながれる</rt></ruby><ruby>電流<rt>でんりゅう</rt></ruby>は<ruby>小さく<rt>ちいさく</rt></ruby>なる。",
+  "answer": "○",
+  "exp_jp": "オームの<ruby>法則<rt>ほうそく</rt></ruby>（I=V/R）より、<ruby>電圧<rt>でんあつ</rt></ruby>が<ruby>一定<rt>いってい</rt></ruby>であれば<ruby>抵抗<rt>ていこう</rt></ruby>が<ruby>大きい<rt>おおきい</rt></ruby>ほど<ruby>電流<rt>でんりゅう</rt></ruby>は<ruby>小さく<rt>ちいさく</rt></ruby>なる。",
+  "exp_vn": "Theo định luật Ohm (I=V/R), nếu điện áp không đổi thì điện trở càng lớn, dòng điện càng nhỏ."
+ },
+ {
+  "id": 5,
+  "cat_jp": "1. 電気の基礎",
+  "type": "OX",
+  "q_jp": "<ruby>抵抗<rt>ていこう</rt></ruby>を<ruby>直列<rt>ちょくれつ</rt></ruby>に<ruby>接続<rt>せつぞく</rt></ruby>すると、<ruby>回路<rt>かいろ</rt></ruby><ruby>全体<rt>ぜんたい</rt></ruby>の<ruby>合成<rt>ごうせい</rt></ruby><ruby>抵抗<rt>ていこう</rt></ruby>は<ruby>各<rt>かく</rt></ruby><ruby>抵抗<rt>ていこう</rt></ruby>の<ruby>値<rt>あたい</rt></ruby>の<ruby>和<rt>わ</rt></ruby>になる。",
+  "answer": "○",
+  "exp_jp": "<ruby>直列<rt>ちょくれつ</rt></ruby><ruby>接続<rt>せつぞく</rt></ruby>の<ruby>合成<rt>ごうせい</rt></ruby><ruby>抵抗<rt>ていこう</rt></ruby>はR1+R2+…のように<ruby>単純<rt>たんじゅん</rt></ruby>な<ruby>足し算<rt>たしざん</rt></ruby>で<ruby>求め<rt>もとめ</rt></ruby>られる。",
+  "exp_vn": "Điện trở tổng khi mắc nối tiếp được tính đơn giản bằng R1+R2+…"
+ },
+ {
+  "id": 6,
+  "cat_jp": "1. 電気の基礎",
+  "type": "OX",
+  "q_jp": "コイルに<ruby>流れる<rt>ながれる</rt></ruby><ruby>電流<rt>でんりゅう</rt></ruby>の<ruby>向き<rt>むき</rt></ruby>を<ruby>逆<rt>ぎゃく</rt></ruby>にしても、コイルの<ruby>周り<rt>まわり</rt></ruby>にできる<ruby>磁界<rt>じかい</rt></ruby>の<ruby>向き<rt>むき</rt></ruby>は<ruby>変わら<rt>かわら</rt></ruby>ない。",
+  "answer": "×",
+  "exp_jp": "<ruby>電流<rt>でんりゅう</rt></ruby>の<ruby>向き<rt>むき</rt></ruby>を<ruby>変える<rt>かえる</rt></ruby>と、<ruby>右手<rt>みぎて</rt></ruby>の<ruby>法則<rt>ほうそく</rt></ruby>により<ruby>磁界<rt>じかい</rt></ruby>の<ruby>向き<rt>むき</rt></ruby>も<ruby>逆<rt>ぎゃく</rt></ruby>になる。",
+  "exp_vn": "Khi đảo chiều dòng điện, theo quy tắc bàn tay phải, chiều từ trường cũng sẽ đảo ngược.",
+  "img": "<svg viewBox='0 0 260 180' xmlns='http://www.w3.org/2000/svg'><line x1='130' y1='10' x2='130' y2='170' stroke='#2d2a4a' stroke-width='3'/><polygon points='130,10 123,26 137,26' fill='#2d2a4a'/><text x='150' y='30' font-size='12' fill='#c92a2a'>電流 I</text><ellipse cx='130' cy='60' rx='60' ry='16' fill='none' stroke='#7b5cff' stroke-width='2'/><ellipse cx='130' cy='95' rx='75' ry='20' fill='none' stroke='#7b5cff' stroke-width='2'/><ellipse cx='130' cy='130' rx='60' ry='16' fill='none' stroke='#7b5cff' stroke-width='2'/><polygon points='70,95 78,88 78,102' fill='#7b5cff'/><text x='10' y='100' font-size='12' fill='#7b5cff'>磁界</text></svg>"
+ },
+ {
+  "id": 7,
+  "cat_jp": "1. 電気の基礎",
+  "type": "OX",
+  "q_jp": "<ruby>電力<rt>でんりょく</rt></ruby>[W]は、<ruby>電圧<rt>でんあつ</rt></ruby>[V]と<ruby>電流<rt>でんりゅう</rt></ruby>[A]の<ruby>積<rt>せき</rt></ruby>によって<ruby>求める<rt>もとめる</rt></ruby>ことができる。",
+  "answer": "○",
+  "exp_jp": "P=VIの<ruby>式<rt>しき</rt></ruby>で<ruby>表さ<rt>あらわさ</rt></ruby>れ、<ruby>電力<rt>でんりょく</rt></ruby>を<ruby>求める<rt>もとめる</rt></ruby><ruby>基本<rt>きほん</rt></ruby><ruby>的<rt>てき</rt></ruby>な<ruby>計算<rt>けいさん</rt></ruby><ruby>式<rt>しき</rt></ruby>である。",
+  "exp_vn": "Được biểu diễn bằng công thức P=VI, đây là công thức cơ bản để tính công suất điện."
+ },
+ {
+  "id": 8,
+  "cat_jp": "1. 電気の基礎",
+  "type": "OX",
+  "q_jp": "<ruby>交流<rt>こうりゅう</rt></ruby>の<ruby>周波<rt>しゅうは</rt></ruby><ruby>数<rt>すう</rt></ruby>とは、1<ruby>秒間<rt>びょうかん</rt></ruby>に<ruby>繰り返さ<rt>くりかえさ</rt></ruby>れる<ruby>波形<rt>はけい</rt></ruby>（サイクル）の<ruby>数<rt>かず</rt></ruby>のことである。",
+  "answer": "○",
+  "exp_jp": "<ruby>周波<rt>しゅうは</rt></ruby><ruby>数<rt>すう</rt></ruby>の<ruby>単位<rt>たんい</rt></ruby>はHz（ヘルツ）で<ruby>表さ<rt>あらわさ</rt></ruby>れ、<ruby>日本<rt>にほん</rt></ruby>では<ruby>主に<rt>おもに</rt></ruby>50Hzまたは60Hzが<ruby>使わ<rt>つかわ</rt></ruby>れている。",
+  "exp_vn": "Đơn vị của tần số là Hz (Hertz), tại Nhật Bản chủ yếu sử dụng tần số 50Hz hoặc 60Hz."
+ },
+ {
+  "id": 9,
+  "cat_jp": "1. 電気の基礎",
+  "type": "OX",
+  "q_jp": "<ruby>電流<rt>でんりゅう</rt></ruby><ruby>計<rt>けい</rt></ruby>は、<ruby>電流<rt>でんりゅう</rt></ruby>を<ruby>測定<rt>そくてい</rt></ruby>したい<ruby>回路<rt>かいろ</rt></ruby>に<ruby>対し<rt>たいし</rt></ruby>て<ruby>並列<rt>へいれつ</rt></ruby>に<ruby>接続<rt>せつぞく</rt></ruby>して<ruby>使用<rt>しよう</rt></ruby>する。",
+  "answer": "×",
+  "exp_jp": "<ruby>電流<rt>でんりゅう</rt></ruby><ruby>計<rt>けい</rt></ruby>は<ruby>回路<rt>かいろ</rt></ruby>に<ruby>対し<rt>たいし</rt></ruby>て<ruby>直列<rt>ちょくれつ</rt></ruby>に<ruby>接続<rt>せつぞく</rt></ruby>して<ruby>使用<rt>しよう</rt></ruby>する。<ruby>並列<rt>へいれつ</rt></ruby>に<ruby>接続<rt>せつぞく</rt></ruby>すると<ruby>大<rt>だい</rt></ruby><ruby>電流<rt>でんりゅう</rt></ruby>が<ruby>流れ<rt>ながれ</rt></ruby>、<ruby>機器<rt>きき</rt></ruby>の<ruby>破損<rt>はそん</rt></ruby>や<ruby>事故<rt>じこ</rt></ruby>につながる<ruby>危険<rt>きけん</rt></ruby>がある。",
+  "exp_vn": "Ampe kế phải được mắc nối tiếp với mạch điện. Nếu mắc song song, dòng điện lớn sẽ chạy qua, có thể làm hỏng thiết bị hoặc gây sự cố.",
+  "img": "<svg viewBox='0 0 260 140' xmlns='http://www.w3.org/2000/svg'><line x1='20' y1='100' x2='240' y2='100' stroke='#2d2a4a' stroke-width='2'/><rect x='100' y='85' width='60' height='30' fill='none' stroke='#2d2a4a' stroke-width='2'/><text x='113' y='105' font-size='11' fill='#2d2a4a'>負荷</text><path d='M100,100 L100,40 L160,40 L160,100' fill='none' stroke='#e6483f' stroke-width='2'/><circle cx='130' cy='40' r='16' fill='#fff5f5' stroke='#e6483f' stroke-width='2'/><text x='124' y='45' font-size='13' fill='#e6483f'>A</text><text x='60' y='25' font-size='13' fill='#c92a2a'>× 電流計を並列接続（誤り）</text></svg>"
+ },
+ {
+  "id": 10,
+  "cat_jp": "1. 電気の基礎",
+  "type": "OX",
+  "q_jp": "<ruby>電圧<rt>でんあつ</rt></ruby><ruby>計<rt>けい</rt></ruby>は、<ruby>電圧<rt>でんあつ</rt></ruby>を<ruby>測定<rt>そくてい</rt></ruby>したい<ruby>部分<rt>ぶぶん</rt></ruby>に<ruby>対し<rt>たいし</rt></ruby>て<ruby>並列<rt>へいれつ</rt></ruby>に<ruby>接続<rt>せつぞく</rt></ruby>して<ruby>使用<rt>しよう</rt></ruby>する。",
+  "answer": "○",
+  "exp_jp": "<ruby>電圧<rt>でんあつ</rt></ruby><ruby>計<rt>けい</rt></ruby>は<ruby>測定<rt>そくてい</rt></ruby>したい<ruby>箇所<rt>かしょ</rt></ruby>に<ruby>対し<rt>たいし</rt></ruby>て<ruby>並列<rt>へいれつ</rt></ruby>に<ruby>接続<rt>せつぞく</rt></ruby>する。<ruby>直列<rt>ちょくれつ</rt></ruby>に<ruby>接続<rt>せつぞく</rt></ruby>すると<ruby>正しく<rt>ただしく</rt></ruby><ruby>測定<rt>そくてい</rt></ruby>できない。",
+  "exp_vn": "Vôn kế được mắc song song với phần cần đo. Nếu mắc nối tiếp sẽ không đo được chính xác.",
+  "img": "<svg viewBox='0 0 260 140' xmlns='http://www.w3.org/2000/svg'><line x1='20' y1='100' x2='240' y2='100' stroke='#2d2a4a' stroke-width='2'/><rect x='100' y='85' width='60' height='30' fill='none' stroke='#2d2a4a' stroke-width='2'/><text x='113' y='105' font-size='11' fill='#2d2a4a'>負荷</text><path d='M100,100 L100,40 L160,40 L160,100' fill='none' stroke='#20a562' stroke-width='2'/><circle cx='130' cy='40' r='16' fill='#eaffef' stroke='#20a562' stroke-width='2'/><text x='124' y='45' font-size='13' fill='#20a562'>V</text><text x='55' y='25' font-size='13' fill='#1a8f5a'>○ 電圧計を並列接続（正しい）</text></svg>"
+ },
+ {
+  "id": 11,
+  "cat_jp": "2. 工具・器具",
+  "type": "OX",
+  "q_jp": "ラチェット<ruby>式<rt>しき</rt></ruby>の<ruby>圧着<rt>あっちゃく</rt></ruby><ruby>工具<rt>こうぐ</rt></ruby>は、<ruby>圧着<rt>あっちゃく</rt></ruby>が<ruby>完了<rt>かんりょう</rt></ruby>するまでハンドルを<ruby>開く<rt>ひらく</rt></ruby>ことができない<ruby>構造<rt>こうぞう</rt></ruby>になっている。",
+  "answer": "○",
+  "exp_jp": "<ruby>圧着<rt>あっちゃく</rt></ruby>が<ruby>不<rt>ふ</rt></ruby><ruby>完全<rt>かんぜん</rt></ruby>なまま<ruby>外れ<rt>はずれ</rt></ruby>てしまうことを<ruby>防ぐ<rt>ふせぐ</rt></ruby>ための<ruby>安全<rt>あんぜん</rt></ruby><ruby>機構<rt>きこう</rt></ruby>である。",
+  "exp_vn": "Đây là cơ chế an toàn nhằm ngăn việc tháo ra khi chưa ép xong hoàn toàn.",
+  "img": "<svg viewBox='0 0 260 150' xmlns='http://www.w3.org/2000/svg'><line x1='20' y1='120' x2='150' y2='60' stroke='#2d2a4a' stroke-width='8' stroke-linecap='round'/><line x1='20' y1='40' x2='150' y2='70' stroke='#2d2a4a' stroke-width='8' stroke-linecap='round'/><circle cx='150' cy='65' r='9' fill='#7b5cff' stroke='#2d2a4a' stroke-width='2'/><path d='M150,60 L220,50 L225,65 L150,72 Z' fill='#ffd23f' stroke='#2d2a4a' stroke-width='2'/><text x='130' y='140' font-size='12' fill='#2d2a4a' text-anchor='middle'>ラチェット式圧着工具</text></svg>"
+ },
+ {
+  "id": 12,
+  "cat_jp": "2. 工具・器具",
+  "type": "OX",
+  "q_jp": "ノギスは、<ruby>一般<rt>いっぱん</rt></ruby>に0.05mm<ruby>程度<rt>ていど</rt></ruby>の<ruby>精度<rt>せいど</rt></ruby>で<ruby>寸法<rt>すんぽう</rt></ruby>を<ruby>測定<rt>そくてい</rt></ruby>できる<ruby>工具<rt>こうぐ</rt></ruby>である。",
+  "answer": "○",
+  "exp_jp": "ノギスは<ruby>主<rt>しゅ</rt></ruby><ruby>尺<rt>しゃく</rt></ruby>と<ruby>副<rt>ふく</rt></ruby><ruby>尺<rt>しゃく</rt></ruby>（バーニヤ）を<ruby>用い<rt>もちい</rt></ruby>て0.05mm<ruby>単位<rt>たんい</rt></ruby>まで<ruby>読み取れる<rt>よみとれる</rt></ruby>。0.01mm<ruby>単位<rt>たんい</rt></ruby>の<ruby>測定<rt>そくてい</rt></ruby>にはマイクロメータを<ruby>用いる<rt>もちいる</rt></ruby>。",
+  "exp_vn": "Thước cặp dùng thước chính và thước phụ (vernier) để đọc đến đơn vị 0.05mm. Để đo đến đơn vị 0.01mm cần dùng panme (micrometer).",
+  "img": "<svg viewBox='0 0 280 120' xmlns='http://www.w3.org/2000/svg'><rect x='20' y='50' width='220' height='14' fill='#faf9ff' stroke='#2d2a4a' stroke-width='2'/><line x1='30' y1='50' x2='30' y2='40' stroke='#2d2a4a' stroke-width='1'/><line x1='50' y1='50' x2='50' y2='42' stroke='#2d2a4a' stroke-width='1'/><line x1='70' y1='50' x2='70' y2='40' stroke='#2d2a4a' stroke-width='1'/><line x1='90' y1='50' x2='90' y2='42' stroke='#2d2a4a' stroke-width='1'/><line x1='110' y1='50' x2='110' y2='40' stroke='#2d2a4a' stroke-width='1'/><rect x='30' y='20' width='10' height='44' fill='#2d2a4a'/><rect x='150' y='20' width='10' height='44' fill='#7b5cff'/><rect x='150' y='64' width='40' height='16' fill='#eee9ff' stroke='#2d2a4a' stroke-width='1.5'/><text x='140' y='105' font-size='12' fill='#2d2a4a' text-anchor='middle'>ノギス（バーニヤ副尺）</text></svg>"
+ },
+ {
+  "id": 13,
+  "cat_jp": "2. 工具・器具",
+  "type": "OX",
+  "q_jp": "マイクロメータは、ノギスよりも<ruby>精密<rt>せいみつ</rt></ruby>な<ruby>寸法<rt>すんぽう</rt></ruby><ruby>測定<rt>そくてい</rt></ruby>ができる<ruby>工具<rt>こうぐ</rt></ruby>である。",
+  "answer": "○",
+  "exp_jp": "マイクロメータは<ruby>一般<rt>いっぱん</rt></ruby>に0.01mm<ruby>程度<rt>ていど</rt></ruby>、あるいはそれ<ruby>以上<rt>いじょう</rt></ruby>の<ruby>精度<rt>せいど</rt></ruby>で<ruby>測定<rt>そくてい</rt></ruby>できる。",
+  "exp_vn": "Panme thường có thể đo với độ chính xác khoảng 0.01mm hoặc cao hơn.",
+  "img": "<svg viewBox='0 0 260 140' xmlns='http://www.w3.org/2000/svg'><path d='M30,30 C10,30 10,100 30,100' fill='none' stroke='#2d2a4a' stroke-width='6'/><line x1='30' y1='65' x2='120' y2='65' stroke='#2d2a4a' stroke-width='5'/><rect x='120' y='50' width='16' height='30' fill='#faf9ff' stroke='#2d2a4a' stroke-width='2'/><circle cx='170' cy='65' r='28' fill='#eee9ff' stroke='#2d2a4a' stroke-width='2'/><line x1='198' y1='65' x2='230' y2='65' stroke='#2d2a4a' stroke-width='4'/><text x='130' y='120' font-size='12' fill='#2d2a4a' text-anchor='middle'>マイクロメータ</text></svg>"
+ },
+ {
+  "id": 14,
+  "cat_jp": "2. 工具・器具",
+  "type": "OX",
+  "q_jp": "ばね<ruby>座金<rt>ざがね</rt></ruby>（スプリングワッシャー）は、<ruby>振動<rt>しんどう</rt></ruby>などによるボルト・ナットの<ruby>緩み<rt>ゆるみ</rt></ruby>を<ruby>防止<rt>ぼうし</rt></ruby>するために<ruby>使用<rt>しよう</rt></ruby>する。",
+  "answer": "○",
+  "exp_jp": "<ruby>弾性<rt>だんせい</rt></ruby><ruby>力<rt>りょく</rt></ruby>によって<ruby>締結<rt>ていけつ</rt></ruby><ruby>部<rt>ぶ</rt></ruby>にゆるみが<ruby>生じる<rt>しょうじる</rt></ruby>のを<ruby>防ぐ<rt>ふせぐ</rt></ruby><ruby>役割<rt>やくわり</rt></ruby>がある。",
+  "exp_vn": "Nhờ lực đàn hồi, giúp ngăn ngừa phần liên kết bị lỏng ra.",
+  "img": "<svg viewBox='0 0 200 140' xmlns='http://www.w3.org/2000/svg'><rect x='70' y='8' width='60' height='14' fill='#2d2a4a'/><rect x='92' y='22' width='16' height='34' fill='#999'/><circle cx='100' cy='75' r='22' fill='none' stroke='#e85d04' stroke-width='8' stroke-dasharray='128 10'/><rect x='75' y='95' width='50' height='28' fill='#faf9ff' stroke='#2d2a4a' stroke-width='2'/><text x='100' y='132' font-size='11' fill='#2d2a4a' text-anchor='middle'>ばね座金</text></svg>"
+ },
+ {
+  "id": 15,
+  "cat_jp": "2. 工具・器具",
+  "type": "OX",
+  "q_jp": "トルクレンチは、ボルトやナットを<ruby>規定<rt>きてい</rt></ruby>の<ruby>力<rt>ちから</rt></ruby>で<ruby>締め付ける<rt>しめつける</rt></ruby>ために<ruby>使用<rt>しよう</rt></ruby>する<ruby>工具<rt>こうぐ</rt></ruby>である。",
+  "answer": "○",
+  "exp_jp": "<ruby>締め付け<rt>しめつけ</rt></ruby><ruby>不足<rt>ふそく</rt></ruby>や<ruby>締め<rt>しめ</rt></ruby>すぎを<ruby>防ぐ<rt>ふせぐ</rt></ruby>ために<ruby>使用<rt>しよう</rt></ruby>する。",
+  "exp_vn": "Được sử dụng để tránh siết quá lỏng hoặc quá chặt."
+ },
+ {
+  "id": 16,
+  "cat_jp": "2. 工具・器具",
+  "type": "OX",
+  "q_jp": "<ruby>電気<rt>でんき</rt></ruby>ドリルで<ruby>穴あけ<rt>あなあけ</rt></ruby><ruby>加工<rt>かこう</rt></ruby>を<ruby>行う<rt>おこなう</rt></ruby>ときは、<ruby>手袋<rt>てぶくろ</rt></ruby>を<ruby>着用<rt>ちゃくよう</rt></ruby>したほうが<ruby>安全<rt>あんぜん</rt></ruby>である。",
+  "answer": "×",
+  "exp_jp": "<ruby>手袋<rt>てぶくろ</rt></ruby>が<ruby>回転<rt>かいてん</rt></ruby><ruby>部<rt>ぶ</rt></ruby>に<ruby>巻き込ま<rt>まきこま</rt></ruby>れる<ruby>危険<rt>きけん</rt></ruby>があるため、<ruby>回転<rt>かいてん</rt></ruby>する<ruby>電動<rt>でんどう</rt></ruby><ruby>工具<rt>こうぐ</rt></ruby>を<ruby>使用<rt>しよう</rt></ruby>する<ruby>際<rt>さい</rt></ruby>は<ruby>手袋<rt>てぶくろ</rt></ruby>を<ruby>着用<rt>ちゃくよう</rt></ruby>しないのが<ruby>原則<rt>げんそく</rt></ruby>である。",
+  "exp_vn": "Găng tay có nguy cơ bị cuốn vào bộ phận quay, nên nguyên tắc là không đeo găng tay khi sử dụng dụng cụ điện có bộ phận quay."
+ },
+ {
+  "id": 17,
+  "cat_jp": "2. 工具・器具",
+  "type": "OX",
+  "q_jp": "スパナは、ボルトやナットのサイズに<ruby>合っ<rt>あっ</rt></ruby>たものを<ruby>選ん<rt>えらん</rt></ruby>で<ruby>使用<rt>しよう</rt></ruby>する<ruby>必要<rt>ひつよう</rt></ruby>がある。",
+  "answer": "○",
+  "exp_jp": "サイズが<ruby>合わ<rt>あわ</rt></ruby>ないと<ruby>十分<rt>じゅうぶん</rt></ruby>な<ruby>力<rt>ちから</rt></ruby>がかからず、ボルトやナットを<ruby>傷める<rt>いためる</rt></ruby><ruby>原因<rt>げんいん</rt></ruby>になる。",
+  "exp_vn": "Nếu không đúng kích thước sẽ không tạo đủ lực và có thể làm hỏng bu lông, đai ốc."
+ },
+ {
+  "id": 18,
+  "cat_jp": "2. 工具・器具",
+  "type": "OX",
+  "q_jp": "ワイヤストリッパは、<ruby>電線<rt>でんせん</rt></ruby>の<ruby>心線<rt>しんせん</rt></ruby>を<ruby>切断<rt>せつだん</rt></ruby>するための<ruby>工具<rt>こうぐ</rt></ruby>であり、<ruby>被覆<rt>ひふく</rt></ruby>をむく<ruby>用途<rt>ようと</rt></ruby>には<ruby>使用<rt>しよう</rt></ruby>できない。",
+  "answer": "×",
+  "exp_jp": "ワイヤストリッパは、<ruby>電線<rt>でんせん</rt></ruby>の<ruby>被覆<rt>ひふく</rt></ruby>を<ruby>一定<rt>いってい</rt></ruby>の<ruby>長<rt>なが</rt></ruby>さでむくための<ruby>工具<rt>こうぐ</rt></ruby>である。",
+  "exp_vn": "Kìm tuốt dây là dụng cụ dùng để tuốt vỏ bọc dây điện với độ dài nhất định."
+ },
+ {
+  "id": 19,
+  "cat_jp": "2. 工具・器具",
+  "type": "OX",
+  "q_jp": "けがき<ruby>針<rt>ばり</rt></ruby>は、<ruby>金属<rt>きんぞく</rt></ruby><ruby>材料<rt>ざいりょう</rt></ruby>に<ruby>加工<rt>かこう</rt></ruby><ruby>位置<rt>いち</rt></ruby>の<ruby>線<rt>せん</rt></ruby>を<ruby>引く<rt>ひく</rt></ruby>ために<ruby>使用<rt>しよう</rt></ruby>する<ruby>工具<rt>こうぐ</rt></ruby>である。",
+  "answer": "○",
+  "exp_jp": "<ruby>正確<rt>せいかく</rt></ruby>な<ruby>加工<rt>かこう</rt></ruby>を<ruby>行う<rt>おこなう</rt></ruby>ため、あらかじめけがき<ruby>線<rt>せん</rt></ruby>を<ruby>引い<rt>ひい</rt></ruby>ておく。",
+  "exp_vn": "Để gia công chính xác, cần vạch đường trước khi thực hiện."
+ },
+ {
+  "id": 20,
+  "cat_jp": "2. 工具・器具",
+  "type": "OX",
+  "q_jp": "グラインダを<ruby>使用<rt>しよう</rt></ruby>するときは、<ruby>保護<rt>ほご</rt></ruby>めがねを<ruby>着用<rt>ちゃくよう</rt></ruby>する<ruby>必要<rt>ひつよう</rt></ruby>はない。",
+  "answer": "×",
+  "exp_jp": "<ruby>研削<rt>けんさく</rt></ruby><ruby>中<rt>ちゅう</rt></ruby>に<ruby>飛び散る<rt>とびちる</rt></ruby><ruby>火花<rt>ひばな</rt></ruby>や<ruby>粉じん<rt>ふんじん</rt></ruby>から<ruby>目<rt>め</rt></ruby>を<ruby>守る<rt>まもる</rt></ruby>ため、<ruby>保護<rt>ほご</rt></ruby>めがねの<ruby>着用<rt>ちゃくよう</rt></ruby>が<ruby>必須<rt>ひっす</rt></ruby>である。",
+  "exp_vn": "Để bảo vệ mắt khỏi tia lửa và bụi bắn ra trong quá trình mài, bắt buộc phải đeo kính bảo hộ."
+ },
+ {
+  "id": 21,
+  "cat_jp": "3. 材料",
+  "type": "OX",
+  "q_jp": "<ruby>空気<rt>くうき</rt></ruby>は、<ruby>一般<rt>いっぱん</rt></ruby>に<ruby>電気<rt>でんき</rt></ruby>を<ruby>通し<rt>とおし</rt></ruby>にくい<ruby>絶縁<rt>ぜつえん</rt></ruby><ruby>体<rt>たい</rt></ruby>としての<ruby>性質<rt>せいしつ</rt></ruby>を<ruby>持つ<rt>もつ</rt></ruby>。",
+  "answer": "○",
+  "exp_jp": "<ruby>空気<rt>くうき</rt></ruby>は<ruby>通常<rt>つうじょう</rt></ruby>の<ruby>状態<rt>じょうたい</rt></ruby>では<ruby>電気<rt>でんき</rt></ruby>をほとんど<ruby>通さ<rt>とおさ</rt></ruby>ないため、<ruby>絶縁<rt>ぜつえん</rt></ruby><ruby>体<rt>たい</rt></ruby>として<ruby>扱わ<rt>あつかわ</rt></ruby>れる。",
+  "exp_vn": "Trong điều kiện bình thường, không khí hầu như không dẫn điện nên được coi là vật cách điện."
+ },
+ {
+  "id": 22,
+  "cat_jp": "3. 材料",
+  "type": "OX",
+  "q_jp": "ガラスやマイカは、<ruby>絶縁<rt>ぜつえん</rt></ruby><ruby>材料<rt>ざいりょう</rt></ruby>として<ruby>利用<rt>りよう</rt></ruby>される。",
+  "answer": "○",
+  "exp_jp": "ガラス、マイカ、ワニスなどは<ruby>電気<rt>でんき</rt></ruby>を<ruby>通し<rt>とおし</rt></ruby>にくいため<ruby>絶縁<rt>ぜつえん</rt></ruby><ruby>材料<rt>ざいりょう</rt></ruby>として<ruby>広く<rt>ひろく</rt></ruby><ruby>使わ<rt>つかわ</rt></ruby>れる。",
+  "exp_vn": "Thủy tinh, mica, vecni v.v. khó dẫn điện nên được sử dụng rộng rãi làm vật liệu cách điện."
+ },
+ {
+  "id": 23,
+  "cat_jp": "3. 材料",
+  "type": "OX",
+  "q_jp": "<ruby>絶縁<rt>ぜつえん</rt></ruby><ruby>電線<rt>でんせん</rt></ruby>とは、<ruby>導体<rt>どうたい</rt></ruby>（<ruby>心線<rt>しんせん</rt></ruby>）の<ruby>表面<rt>ひょうめん</rt></ruby>を<ruby>絶縁<rt>ぜつえん</rt></ruby><ruby>材料<rt>ざいりょう</rt></ruby>で<ruby>覆っ<rt>おおっ</rt></ruby>た<ruby>電線<rt>でんせん</rt></ruby>のことである。",
+  "answer": "○",
+  "exp_jp": "<ruby>感電<rt>かんでん</rt></ruby>や<ruby>短絡<rt>たんらく</rt></ruby>を<ruby>防ぐ<rt>ふせぐ</rt></ruby>ため、<ruby>導体<rt>どうたい</rt></ruby>の<ruby>周り<rt>まわり</rt></ruby>を<ruby>絶縁<rt>ぜつえん</rt></ruby><ruby>材料<rt>ざいりょう</rt></ruby>で<ruby>覆っ<rt>おおっ</rt></ruby>ている。",
+  "exp_vn": "Để phòng chống điện giật và đoản mạch, phần lõi dẫn được bọc bằng vật liệu cách điện xung quanh."
+ },
+ {
+  "id": 24,
+  "cat_jp": "3. 材料",
+  "type": "OX",
+  "q_jp": "<ruby>銅<rt>どう</rt></ruby>は、<ruby>一般<rt>いっぱん</rt></ruby><ruby>的<rt>てき</rt></ruby>な<ruby>金属<rt>きんぞく</rt></ruby>の<ruby>中<rt>なか</rt></ruby>で<ruby>電気<rt>でんき</rt></ruby>を<ruby>最も<rt>もっとも</rt></ruby><ruby>通し<rt>とおし</rt></ruby>にくい<ruby>部類<rt>ぶるい</rt></ruby>に<ruby>入る<rt>はいる</rt></ruby>。",
+  "answer": "×",
+  "exp_jp": "<ruby>銅<rt>どう</rt></ruby>は<ruby>電気<rt>でんき</rt></ruby><ruby>抵抗<rt>ていこう</rt></ruby>が<ruby>小さく<rt>ちいさく</rt></ruby>、<ruby>電気<rt>でんき</rt></ruby>を<ruby>通し<rt>とおし</rt></ruby>やすい<ruby>代表<rt>だいひょう</rt></ruby><ruby>的<rt>てき</rt></ruby>な<ruby>導電<rt>どうでん</rt></ruby><ruby>材料<rt>ざいりょう</rt></ruby>である。",
+  "exp_vn": "Đồng có điện trở nhỏ, là vật liệu dẫn điện tiêu biểu, dễ dẫn điện."
+ },
+ {
+  "id": 25,
+  "cat_jp": "3. 材料",
+  "type": "OX",
+  "q_jp": "ゴムは、<ruby>絶縁<rt>ぜつえん</rt></ruby><ruby>材料<rt>ざいりょう</rt></ruby>として<ruby>電線<rt>でんせん</rt></ruby>の<ruby>被覆<rt>ひふく</rt></ruby>などに<ruby>利用<rt>りよう</rt></ruby>される。",
+  "answer": "○",
+  "exp_jp": "ゴムは<ruby>電気<rt>でんき</rt></ruby>を<ruby>通し<rt>とおし</rt></ruby>にくい<ruby>性質<rt>せいしつ</rt></ruby>を<ruby>持ち<rt>もち</rt></ruby>、<ruby>絶縁<rt>ぜつえん</rt></ruby><ruby>被覆<rt>ひふく</rt></ruby><ruby>材<rt>ざい</rt></ruby>として<ruby>使用<rt>しよう</rt></ruby>される。",
+  "exp_vn": "Cao su có tính chất khó dẫn điện nên được dùng làm vật liệu bọc cách điện."
+ },
+ {
+  "id": 26,
+  "cat_jp": "3. 材料",
+  "type": "OX",
+  "q_jp": "<ruby>鉄<rt>てつ</rt></ruby>は、<ruby>銅<rt>どう</rt></ruby>よりも<ruby>導電<rt>どうでん</rt></ruby><ruby>率<rt>りつ</rt></ruby>が<ruby>高い<rt>たかい</rt></ruby><ruby>金属<rt>きんぞく</rt></ruby>である。",
+  "answer": "×",
+  "exp_jp": "<ruby>鉄<rt>てつ</rt></ruby>は<ruby>銅<rt>どう</rt></ruby>よりも<ruby>電気<rt>でんき</rt></ruby><ruby>抵抗<rt>ていこう</rt></ruby>が<ruby>大きく<rt>おおきく</rt></ruby>、<ruby>導電<rt>どうでん</rt></ruby><ruby>率<rt>りつ</rt></ruby>は<ruby>銅<rt>どう</rt></ruby>より<ruby>低い<rt>ひくい</rt></ruby>。",
+  "exp_vn": "Sắt có điện trở lớn hơn đồng, độ dẫn điện thấp hơn đồng."
+ },
+ {
+  "id": 27,
+  "cat_jp": "3. 材料",
+  "type": "OX",
+  "q_jp": "<ruby>磁性<rt>じせい</rt></ruby><ruby>材料<rt>ざいりょう</rt></ruby>は、<ruby>磁石<rt>じしゃく</rt></ruby>に<ruby>引き寄せ<rt>ひきよせ</rt></ruby>られやすい<ruby>性質<rt>せいしつ</rt></ruby>を<ruby>持つ<rt>もつ</rt></ruby><ruby>材料<rt>ざいりょう</rt></ruby>のことである。",
+  "answer": "○",
+  "exp_jp": "<ruby>鉄<rt>てつ</rt></ruby>やニッケルなど、<ruby>磁界<rt>じかい</rt></ruby>の<ruby>影響<rt>えいきょう</rt></ruby>を<ruby>強く<rt>つよく</rt></ruby><ruby>受ける<rt>うける</rt></ruby><ruby>材料<rt>ざいりょう</rt></ruby>を<ruby>磁性<rt>じせい</rt></ruby><ruby>材料<rt>ざいりょう</rt></ruby>という。",
+  "exp_vn": "Sắt, niken v.v., những vật liệu chịu ảnh hưởng mạnh của từ trường được gọi là vật liệu từ tính."
+ },
+ {
+  "id": 28,
+  "cat_jp": "3. 材料",
+  "type": "OX",
+  "q_jp": "IV<ruby>電線<rt>でんせん</rt></ruby>は、<ruby>主に<rt>おもに</rt></ruby><ruby>屋外<rt>おくがい</rt></ruby>の<ruby>高圧<rt>こうあつ</rt></ruby><ruby>配電<rt>はいでん</rt></ruby><ruby>線<rt>せん</rt></ruby>として<ruby>使用<rt>しよう</rt></ruby>される<ruby>電線<rt>でんせん</rt></ruby>である。",
+  "answer": "×",
+  "exp_jp": "IV<ruby>電線<rt>でんせん</rt></ruby>は、<ruby>一般<rt>いっぱん</rt></ruby>に<ruby>屋内<rt>おくない</rt></ruby><ruby>配線<rt>はいせん</rt></ruby>や<ruby>制御<rt>せいぎょ</rt></ruby><ruby>盤<rt>ばん</rt></ruby><ruby>内<rt>ない</rt></ruby><ruby>配線<rt>はいせん</rt></ruby>などの<ruby>低圧<rt>ていあつ</rt></ruby><ruby>配線<rt>はいせん</rt></ruby><ruby>用<rt>よう</rt></ruby><ruby>電線<rt>でんせん</rt></ruby>として<ruby>使用<rt>しよう</rt></ruby>される。",
+  "exp_vn": "Dây điện IV thường được sử dụng làm dây điện áp thấp cho đấu dây trong nhà hoặc trong tủ điều khiển."
+ },
+ {
+  "id": 29,
+  "cat_jp": "4. 配線作業",
+  "type": "OX",
+  "q_jp": "<ruby>配線<rt>はいせん</rt></ruby><ruby>作業<rt>さぎょう</rt></ruby>では、<ruby>直流<rt>ちょくりゅう</rt></ruby><ruby>回路<rt>かいろ</rt></ruby>と<ruby>交流<rt>こうりゅう</rt></ruby><ruby>回路<rt>かいろ</rt></ruby>の<ruby>配線<rt>はいせん</rt></ruby>を<ruby>分け<rt>わけ</rt></ruby>て<ruby>行う<rt>おこなう</rt></ruby>のが<ruby>基本<rt>きほん</rt></ruby>である。",
+  "answer": "○",
+  "exp_jp": "<ruby>誤配<rt>ごはい</rt></ruby><ruby>線<rt>せん</rt></ruby>や<ruby>事故<rt>じこ</rt></ruby><ruby>防止<rt>ぼうし</rt></ruby>のため、<ruby>直流<rt>ちょくりゅう</rt></ruby><ruby>回路<rt>かいろ</rt></ruby>と<ruby>交流<rt>こうりゅう</rt></ruby><ruby>回路<rt>かいろ</rt></ruby>は<ruby>明確<rt>めいかく</rt></ruby>に<ruby>区別<rt>くべつ</rt></ruby>して<ruby>配線<rt>はいせん</rt></ruby>する。",
+  "exp_vn": "Để phòng tránh đấu nhầm và sự cố, cần phân biệt rõ ràng khi đấu dây mạch một chiều và mạch xoay chiều."
+ },
+ {
+  "id": 30,
+  "cat_jp": "4. 配線作業",
+  "type": "OX",
+  "q_jp": "<ruby>電線<rt>でんせん</rt></ruby>の<ruby>接続<rt>せつぞく</rt></ruby><ruby>部分<rt>ぶぶん</rt></ruby>は、<ruby>絶縁<rt>ぜつえん</rt></ruby><ruby>処理<rt>しょり</rt></ruby>をしなくても<ruby>特に<rt>とくに</rt></ruby><ruby>問題<rt>もんだい</rt></ruby>はない。",
+  "answer": "×",
+  "exp_jp": "<ruby>接続<rt>せつぞく</rt></ruby><ruby>部分<rt>ぶぶん</rt></ruby>は<ruby>絶縁<rt>ぜつえん</rt></ruby>テープなどで<ruby>確実<rt>かくじつ</rt></ruby>に<ruby>絶縁<rt>ぜつえん</rt></ruby><ruby>処理<rt>しょり</rt></ruby>をしないと、<ruby>感電<rt>かんでん</rt></ruby>や<ruby>短絡<rt>たんらく</rt></ruby>の<ruby>原因<rt>げんいん</rt></ruby>になる。",
+  "exp_vn": "Nếu không xử lý cách điện chắc chắn bằng băng cách điện v.v. cho phần đấu nối, sẽ gây ra điện giật hoặc đoản mạch."
+ },
+ {
+  "id": 31,
+  "cat_jp": "4. 配線作業",
+  "type": "OX",
+  "q_jp": "<ruby>停止<rt>ていし</rt></ruby>を<ruby>目的<rt>もくてき</rt></ruby>とするボタンスイッチには、<ruby>一般<rt>いっぱん</rt></ruby><ruby>的<rt>てき</rt></ruby>に<ruby>赤色<rt>あかいろ</rt></ruby>が<ruby>使わ<rt>つかわ</rt></ruby>れる。",
+  "answer": "○",
+  "exp_jp": "<ruby>停止<rt>ていし</rt></ruby>(ストップ)ボタンには<ruby>赤色<rt>あかいろ</rt></ruby>、<ruby>運転<rt>うんてん</rt></ruby>(スタート)ボタンには<ruby>緑色<rt>みどりいろ</rt></ruby>が<ruby>一般<rt>いっぱん</rt></ruby><ruby>的<rt>てき</rt></ruby>に<ruby>使わ<rt>つかわ</rt></ruby>れる。",
+  "exp_vn": "Nút dừng (stop) thường dùng màu đỏ, nút chạy (start) thường dùng màu xanh lá."
+ },
+ {
+  "id": 32,
+  "cat_jp": "4. 配線作業",
+  "type": "OX",
+  "q_jp": "<ruby>運転<rt>うんてん</rt></ruby>（<ruby>始動<rt>しどう</rt></ruby>）を<ruby>目的<rt>もくてき</rt></ruby>とするボタンスイッチには、<ruby>一般<rt>いっぱん</rt></ruby><ruby>的<rt>てき</rt></ruby>に<ruby>赤色<rt>あかいろ</rt></ruby>が<ruby>使わ<rt>つかわ</rt></ruby>れる。",
+  "answer": "×",
+  "exp_jp": "<ruby>一般<rt>いっぱん</rt></ruby><ruby>的<rt>てき</rt></ruby>に、<ruby>運転<rt>うんてん</rt></ruby>(スタート)ボタンには<ruby>緑色<rt>みどりいろ</rt></ruby>、<ruby>停止<rt>ていし</rt></ruby>(ストップ)ボタンには<ruby>赤色<rt>あかいろ</rt></ruby>が<ruby>使わ<rt>つかわ</rt></ruby>れる。",
+  "exp_vn": "Thông thường, nút chạy (start) dùng màu xanh lá, nút dừng (stop) dùng màu đỏ."
+ },
+ {
+  "id": 33,
+  "cat_jp": "4. 配線作業",
+  "type": "OX",
+  "q_jp": "<ruby>接地<rt>せっち</rt></ruby><ruby>線<rt>せん</rt></ruby>（アース<ruby>線<rt>せん</rt></ruby>）には、<ruby>他<rt>た</rt></ruby>の<ruby>電線<rt>でんせん</rt></ruby>と<ruby>区別<rt>くべつ</rt></ruby>するために<ruby>緑色<rt>みどりいろ</rt></ruby>が<ruby>使わ<rt>つかわ</rt></ruby>れることが<ruby>多い<rt>おおい</rt></ruby>。",
+  "answer": "○",
+  "exp_jp": "<ruby>感電<rt>かんでん</rt></ruby><ruby>防止<rt>ぼうし</rt></ruby>のための<ruby>重要<rt>じゅうよう</rt></ruby>な<ruby>線<rt>せん</rt></ruby>であるため、<ruby>色分け<rt>いろわけ</rt></ruby>により<ruby>誤配<rt>ごはい</rt></ruby><ruby>線<rt>せん</rt></ruby>を<ruby>防い<rt>ふせい</rt></ruby>でいる。",
+  "exp_vn": "Vì đây là dây quan trọng để phòng chống điện giật, nên việc phân biệt màu giúp tránh đấu nhầm."
+ },
+ {
+  "id": 34,
+  "cat_jp": "4. 配線作業",
+  "type": "OX",
+  "q_jp": "より<ruby>線<rt>せん</rt></ruby>の<ruby>電線<rt>でんせん</rt></ruby>を<ruby>端子<rt>たんし</rt></ruby><ruby>台<rt>だい</rt></ruby>に<ruby>接続<rt>せつぞく</rt></ruby>する<ruby>際<rt>さい</rt></ruby>は、<ruby>心線<rt>しんせん</rt></ruby>がばらけたままねじで<ruby>締め付け<rt>しめつけ</rt></ruby>てもよい。",
+  "answer": "×",
+  "exp_jp": "<ruby>心線<rt>しんせん</rt></ruby>がばらけたまま<ruby>接続<rt>せつぞく</rt></ruby>すると<ruby>接触<rt>せっしょく</rt></ruby><ruby>不良<rt>ふりょう</rt></ruby>や<ruby>短絡<rt>たんらく</rt></ruby>の<ruby>原因<rt>げんいん</rt></ruby>になるため、<ruby>より合わせる<rt>よりあわせる</rt></ruby>か<ruby>圧着<rt>あっちゃく</rt></ruby><ruby>端子<rt>たんし</rt></ruby>を<ruby>使用<rt>しよう</rt></ruby>する<ruby>必要<rt>ひつよう</rt></ruby>がある。",
+  "exp_vn": "Nếu đấu nối khi lõi dây còn bung rời sẽ gây tiếp xúc kém hoặc đoản mạch, nên cần xoắn lại hoặc dùng đầu cốt ép."
+ },
+ {
+  "id": 35,
+  "cat_jp": "4. 配線作業",
+  "type": "OX",
+  "q_jp": "<ruby>配線<rt>はいせん</rt></ruby><ruby>図<rt>ず</rt></ruby>で<ruby>電線<rt>でんせん</rt></ruby>が<ruby>交差<rt>こうさ</rt></ruby>している<ruby>箇所<rt>かしょ</rt></ruby>には、<ruby>必ず<rt>かならず</rt></ruby><ruby>黒丸<rt>くろまる</rt></ruby>（<ruby>接続<rt>せつぞく</rt></ruby><ruby>点<rt>てん</rt></ruby>）が<ruby>描か<rt>えがか</rt></ruby>れる。",
+  "answer": "×",
+  "exp_jp": "<ruby>実際<rt>じっさい</rt></ruby>に<ruby>電気<rt>でんき</rt></ruby><ruby>的<rt>てき</rt></ruby>に<ruby>接続<rt>せつぞく</rt></ruby>されている<ruby>箇所<rt>かしょ</rt></ruby>にのみ<ruby>黒丸<rt>くろまる</rt></ruby>を<ruby>描く<rt>えがく</rt></ruby>。<ruby>単に<rt>たんに</rt></ruby><ruby>線<rt>せん</rt></ruby>が<ruby>交差<rt>こうさ</rt></ruby>しているだけの<ruby>場合<rt>ばあい</rt></ruby>は<ruby>黒丸<rt>くろまる</rt></ruby>を<ruby>描か<rt>えがか</rt></ruby>ない。",
+  "exp_vn": "Chấm đen chỉ được vẽ ở chỗ thực sự được kết nối về điện. Nếu chỉ là các đường giao nhau thì không có chấm đen.",
+  "img": "<svg viewBox='0 0 280 140' xmlns='http://www.w3.org/2000/svg'><line x1='20' y1='40' x2='120' y2='40' stroke='#2d2a4a' stroke-width='2'/><line x1='70' y1='10' x2='70' y2='70' stroke='#2d2a4a' stroke-width='2'/><text x='70' y='90' font-size='11' fill='#2d2a4a' text-anchor='middle'>接続なし（交差のみ）</text><line x1='160' y1='40' x2='260' y2='40' stroke='#2d2a4a' stroke-width='2'/><line x1='210' y1='10' x2='210' y2='70' stroke='#2d2a4a' stroke-width='2'/><circle cx='210' cy='40' r='5' fill='#2d2a4a'/><text x='210' y='90' font-size='11' fill='#2d2a4a' text-anchor='middle'>接続あり（黒丸あり）</text></svg>"
+ },
+ {
+  "id": 36,
+  "cat_jp": "4. 配線作業",
+  "type": "OX",
+  "q_jp": "<ruby>通電<rt>つうでん</rt></ruby><ruby>前<rt>まえ</rt></ruby>には、<ruby>配線<rt>はいせん</rt></ruby>に<ruby>誤り<rt>あやまり</rt></ruby>がないかをテスタなどで<ruby>確認<rt>かくにん</rt></ruby>することが<ruby>望ましい<rt>のぞましい</rt></ruby>。",
+  "answer": "○",
+  "exp_jp": "<ruby>目視<rt>もくし</rt></ruby>だけでは<ruby>見落とし<rt>みおとし</rt></ruby>があるため、<ruby>通電<rt>つうでん</rt></ruby><ruby>前<rt>まえ</rt></ruby>の<ruby>導通<rt>どうつう</rt></ruby><ruby>確認<rt>かくにん</rt></ruby>は<ruby>事故<rt>じこ</rt></ruby><ruby>防止<rt>ぼうし</rt></ruby>の<ruby>観点<rt>かんてん</rt></ruby>から<ruby>重要<rt>じゅうよう</rt></ruby>である。",
+  "exp_vn": "Vì chỉ kiểm tra bằng mắt có thể bỏ sót, nên việc kiểm tra thông mạch trước khi cấp điện rất quan trọng để phòng tránh sự cố."
+ },
+ {
+  "id": 37,
+  "cat_jp": "5. 盤の構成機器",
+  "type": "OX",
+  "q_jp": "<ruby>配線<rt>はいせん</rt></ruby><ruby>用<rt>よう</rt></ruby><ruby>遮断<rt>しゃだん</rt></ruby><ruby>器<rt>き</rt></ruby>（ブレーカ）は、<ruby>過<rt>か</rt></ruby><ruby>電流<rt>でんりゅう</rt></ruby>や<ruby>短絡<rt>たんらく</rt></ruby>から<ruby>回路<rt>かいろ</rt></ruby>を<ruby>保護<rt>ほご</rt></ruby>するための<ruby>機器<rt>きき</rt></ruby>である。",
+  "answer": "○",
+  "exp_jp": "<ruby>定格<rt>ていかく</rt></ruby>を<ruby>超える<rt>こえる</rt></ruby><ruby>電流<rt>でんりゅう</rt></ruby>が<ruby>流れる<rt>ながれる</rt></ruby>と、<ruby>自動<rt>じどう</rt></ruby><ruby>的<rt>てき</rt></ruby>に<ruby>回路<rt>かいろ</rt></ruby>を<ruby>遮断<rt>しゃだん</rt></ruby>するしくみになっている。",
+  "exp_vn": "Khi có dòng điện vượt quá định mức chạy qua, thiết bị sẽ tự động ngắt mạch.",
+  "img": "<svg viewBox='0 0 200 140' xmlns='http://www.w3.org/2000/svg'><rect x='50' y='20' width='100' height='90' rx='8' fill='#faf9ff' stroke='#2d2a4a' stroke-width='2'/><line x1='100' y1='40' x2='100' y2='60' stroke='#2d2a4a' stroke-width='4'/><rect x='85' y='60' width='30' height='16' fill='#33d17a' stroke='#2d2a4a' stroke-width='2'/><line x1='100' y1='76' x2='100' y2='95' stroke='#2d2a4a' stroke-width='4'/><text x='100' y='125' font-size='11' fill='#2d2a4a' text-anchor='middle'>配線用遮断器（ブレーカ）</text></svg>"
+ },
+ {
+  "id": 38,
+  "cat_jp": "5. 盤の構成機器",
+  "type": "OX",
+  "q_jp": "<ruby>表示<rt>ひょうじ</rt></ruby><ruby>灯<rt>とう</rt></ruby>は、<ruby>電源<rt>でんげん</rt></ruby>や<ruby>機器<rt>きき</rt></ruby>の<ruby>状態<rt>じょうたい</rt></ruby>を<ruby>作業<rt>さぎょう</rt></ruby><ruby>者<rt>しゃ</rt></ruby>に<ruby>知ら<rt>しら</rt></ruby>せるために<ruby>使用<rt>しよう</rt></ruby>される。",
+  "answer": "○",
+  "exp_jp": "<ruby>点灯<rt>てんとう</rt></ruby>・<ruby>消灯<rt>しょうとう</rt></ruby>の<ruby>状態<rt>じょうたい</rt></ruby>によって、<ruby>運転<rt>うんてん</rt></ruby><ruby>状態<rt>じょうたい</rt></ruby>や<ruby>異常<rt>いじょう</rt></ruby>の<ruby>有無<rt>うむ</rt></ruby>を<ruby>表示<rt>ひょうじ</rt></ruby>する。",
+  "exp_vn": "Thông qua trạng thái sáng/tắt, đèn báo hiển thị tình trạng vận hành hoặc có bất thường hay không."
+ },
+ {
+  "id": 39,
+  "cat_jp": "5. 盤の構成機器",
+  "type": "OX",
+  "q_jp": "<ruby>端子<rt>たんし</rt></ruby><ruby>台<rt>だい</rt></ruby>は、<ruby>電線<rt>でんせん</rt></ruby><ruby>同士<rt>どうし</rt></ruby>や<ruby>機器<rt>きき</rt></ruby>と<ruby>電線<rt>でんせん</rt></ruby>を<ruby>接続<rt>せつぞく</rt></ruby>するための<ruby>部品<rt>ぶひん</rt></ruby>である。",
+  "answer": "○",
+  "exp_jp": "<ruby>複数<rt>ふくすう</rt></ruby>の<ruby>電線<rt>でんせん</rt></ruby>を<ruby>安全<rt>あんぜん</rt></ruby>かつ<ruby>確実<rt>かくじつ</rt></ruby>に<ruby>接続<rt>せつぞく</rt></ruby>・<ruby>分岐<rt>ぶんき</rt></ruby>するために<ruby>用い<rt>もちい</rt></ruby>られる。",
+  "exp_vn": "Được sử dụng để đấu nối và phân nhánh nhiều dây điện một cách an toàn, chắc chắn."
+ },
+ {
+  "id": 40,
+  "cat_jp": "5. 盤の構成機器",
+  "type": "OX",
+  "q_jp": "<ruby>継電<rt>けいでん</rt></ruby><ruby>器<rt>き</rt></ruby>（リレー）は、<ruby>大<rt>だい</rt></ruby><ruby>電流<rt>でんりゅう</rt></ruby>の<ruby>負荷<rt>ふか</rt></ruby>を<ruby>直接<rt>ちょくせつ</rt></ruby><ruby>開閉<rt>かいへい</rt></ruby>するために<ruby>使用<rt>しよう</rt></ruby>され、<ruby>制御<rt>せいぎょ</rt></ruby><ruby>回路<rt>かいろ</rt></ruby>には<ruby>使用<rt>しよう</rt></ruby>されない。",
+  "answer": "×",
+  "exp_jp": "リレーは<ruby>主に<rt>おもに</rt></ruby><ruby>制御<rt>せいぎょ</rt></ruby><ruby>回路<rt>かいろ</rt></ruby>の<ruby>信号<rt>しんごう</rt></ruby><ruby>切り替え<rt>きりかえ</rt></ruby>に<ruby>使用<rt>しよう</rt></ruby>され、<ruby>大<rt>だい</rt></ruby><ruby>電流<rt>でんりゅう</rt></ruby>の<ruby>開閉<rt>かいへい</rt></ruby>には<ruby>電磁<rt>でんじ</rt></ruby><ruby>接触<rt>せっしょく</rt></ruby><ruby>器<rt>き</rt></ruby>などが<ruby>用い<rt>もちい</rt></ruby>られる。",
+  "exp_vn": "Rơ le chủ yếu dùng để chuyển đổi tín hiệu trong mạch điều khiển; việc đóng/mở dòng điện lớn thường dùng công tắc tơ điện từ, v.v."
+ },
+ {
+  "id": 41,
+  "cat_jp": "5. 盤の構成機器",
+  "type": "OX",
+  "q_jp": "<ruby>電力<rt>でんりょく</rt></ruby><ruby>量<rt>りょう</rt></ruby><ruby>計<rt>けい</rt></ruby>は、<ruby>消費<rt>しょうひ</rt></ruby>した<ruby>電力<rt>でんりょく</rt></ruby><ruby>量<rt>りょう</rt></ruby>を<ruby>積算<rt>せきさん</rt></ruby>して<ruby>表示<rt>ひょうじ</rt></ruby>する<ruby>計器<rt>けいき</rt></ruby>である。",
+  "answer": "○",
+  "exp_jp": "<ruby>一定<rt>いってい</rt></ruby><ruby>期間<rt>きかん</rt></ruby>に<ruby>使用<rt>しよう</rt></ruby>した<ruby>電力<rt>でんりょく</rt></ruby>の<ruby>総量<rt>そうりょう</rt></ruby>を<ruby>計測<rt>けいそく</rt></ruby>するための<ruby>計器<rt>けいき</rt></ruby>である。",
+  "exp_vn": "Là thiết bị đo tổng lượng điện đã sử dụng trong một khoảng thời gian nhất định."
+ },
+ {
+  "id": 42,
+  "cat_jp": "5. 盤の構成機器",
+  "type": "OX",
+  "q_jp": "<ruby>端子<rt>たんし</rt></ruby><ruby>台<rt>だい</rt></ruby>のねじは、<ruby>電線<rt>でんせん</rt></ruby>が<ruby>抜け<rt>ぬけ</rt></ruby>なければどれだけ<ruby>強く<rt>つよく</rt></ruby><ruby>締め付け<rt>しめつけ</rt></ruby>てもよい。",
+  "answer": "×",
+  "exp_jp": "<ruby>締め<rt>しめ</rt></ruby>すぎると<ruby>心線<rt>しんせん</rt></ruby>の<ruby>損傷<rt>そんしょう</rt></ruby>や<ruby>端子<rt>たんし</rt></ruby>の<ruby>破損<rt>はそん</rt></ruby>につながるため、<ruby>規定<rt>きてい</rt></ruby>のトルクで<ruby>締め付ける<rt>しめつける</rt></ruby><ruby>必要<rt>ひつよう</rt></ruby>がある。",
+  "exp_vn": "Nếu siết quá chặt sẽ làm hỏng lõi dây hoặc cực đấu dây, nên cần siết đúng lực quy định."
+ },
+ {
+  "id": 43,
+  "cat_jp": "6. 安全衛生",
+  "type": "OX",
+  "q_jp": "<ruby>保護<rt>ほご</rt></ruby><ruby>帽<rt>ぼう</rt></ruby>（ヘルメット）の<ruby>顎紐<rt>あごひも</rt></ruby>がきついときは、<ruby>緩め<rt>ゆるめ</rt></ruby>て<ruby>正しく<rt>ただしく</rt></ruby><ruby>調整<rt>ちょうせい</rt></ruby>するのがよい。",
+  "answer": "○",
+  "exp_jp": "きつすぎる<ruby>場合<rt>ばあい</rt></ruby>は<ruby>緩め<rt>ゆるめ</rt></ruby>、<ruby>緩<rt>かん</rt></ruby>すぎる<ruby>場合<rt>ばあい</rt></ruby>は<ruby>締め<rt>しめ</rt></ruby>て、<ruby>常<rt>つね</rt></ruby>に<ruby>正しく<rt>ただしく</rt></ruby><ruby>装着<rt>そうちゃく</rt></ruby>することが<ruby>重要<rt>じゅうよう</rt></ruby>である。",
+  "exp_vn": "Nếu quá chặt thì nới lỏng, nếu quá lỏng thì siết chặt lại, luôn đội đúng cách là điều quan trọng."
+ },
+ {
+  "id": 44,
+  "cat_jp": "6. 安全衛生",
+  "type": "OX",
+  "q_jp": "「<ruby>立入<rt>たちいり</rt></ruby><ruby>禁止<rt>きんし</rt></ruby>」の<ruby>標識<rt>ひょうしき</rt></ruby>があるところには、<ruby>用事<rt>ようじ</rt></ruby>がなくても<ruby>自由<rt>じゆう</rt></ruby>に<ruby>入っ<rt>はいっ</rt></ruby>てよい。",
+  "answer": "×",
+  "exp_jp": "<ruby>立入<rt>たちいり</rt></ruby><ruby>禁止<rt>きんし</rt></ruby>の<ruby>標識<rt>ひょうしき</rt></ruby>がある<ruby>場所<rt>ばしょ</rt></ruby>は<ruby>危険<rt>きけん</rt></ruby>を<ruby>伴う<rt>ともなう</rt></ruby>ため、<ruby>許可<rt>きょか</rt></ruby>なく<ruby>立ち入っ<rt>たちいっ</rt></ruby>てはならない。",
+  "exp_vn": "Nơi có biển cấm vào tiềm ẩn nguy hiểm, không được tự ý vào khi chưa được phép.",
+  "img": "<svg viewBox='0 0 140 140' xmlns='http://www.w3.org/2000/svg'><circle cx='70' cy='60' r='50' fill='#fff' stroke='#e6483f' stroke-width='8'/><line x1='30' y1='100' x2='110' y2='20' stroke='#e6483f' stroke-width='8'/><circle cx='70' cy='40' r='9' fill='#2d2a4a'/><path d='M70,50 L70,80 M55,60 L85,60 M70,80 L58,105 M70,80 L82,105' stroke='#2d2a4a' stroke-width='5' fill='none' stroke-linecap='round'/><text x='70' y='130' font-size='12' fill='#c92a2a' text-anchor='middle'>立入禁止</text></svg>"
+ },
+ {
+  "id": 45,
+  "cat_jp": "6. 安全衛生",
+  "type": "OX",
+  "q_jp": "「<ruby>火気<rt>かき</rt></ruby><ruby>厳禁<rt>げんきん</rt></ruby>」の<ruby>標識<rt>ひょうしき</rt></ruby>があるところでは、たばこを<ruby>吸っ<rt>すっ</rt></ruby>てはいけない。",
+  "answer": "○",
+  "exp_jp": "<ruby>引火<rt>いんか</rt></ruby>・<ruby>爆発<rt>ばくはつ</rt></ruby>の<ruby>危険<rt>きけん</rt></ruby>があるため、<ruby>火気<rt>かき</rt></ruby><ruby>厳禁<rt>げんきん</rt></ruby>の<ruby>場所<rt>ばしょ</rt></ruby>での<ruby>喫煙<rt>きつえん</rt></ruby>は<ruby>厳禁<rt>げんきん</rt></ruby>である。",
+  "exp_vn": "Vì có nguy cơ bắt lửa, nổ, nên việc hút thuốc ở nơi cấm lửa là tuyệt đối cấm.",
+  "img": "<svg viewBox='0 0 140 140' xmlns='http://www.w3.org/2000/svg'><circle cx='70' cy='60' r='50' fill='#fff' stroke='#e6483f' stroke-width='8'/><line x1='30' y1='100' x2='110' y2='20' stroke='#e6483f' stroke-width='8'/><path d='M70,25 C55,45 60,55 65,60 C55,62 50,75 62,85 C70,90 82,85 82,72 C82,62 74,58 74,50 C74,45 78,40 78,35 C74,38 70,32 70,25 Z' fill='#e85d04' stroke='#c92a2a' stroke-width='1.5'/><text x='70' y='130' font-size='12' fill='#c92a2a' text-anchor='middle'>火気厳禁</text></svg>"
+ },
+ {
+  "id": 46,
+  "cat_jp": "6. 安全衛生",
+  "type": "OX",
+  "q_jp": "<ruby>機械<rt>きかい</rt></ruby>を<ruby>清掃<rt>せいそう</rt></ruby>するときは、<ruby>機械<rt>きかい</rt></ruby>のスイッチを<ruby>切っ<rt>きっ</rt></ruby>てから<ruby>行う<rt>おこなう</rt></ruby><ruby>必要<rt>ひつよう</rt></ruby>がある。",
+  "answer": "○",
+  "exp_jp": "<ruby>運転<rt>うんてん</rt></ruby><ruby>中<rt>ちゅう</rt></ruby>の<ruby>清掃<rt>せいそう</rt></ruby>は、<ruby>巻き込ま<rt>まきこま</rt></ruby>れ<ruby>事故<rt>じこ</rt></ruby>など<ruby>重大<rt>じゅうだい</rt></ruby>な<ruby>災害<rt>さいがい</rt></ruby>につながる<ruby>危険<rt>きけん</rt></ruby>がある。",
+  "exp_vn": "Vệ sinh khi máy đang chạy có nguy cơ dẫn đến tai nạn nghiêm trọng như bị cuốn vào máy."
+ },
+ {
+  "id": 47,
+  "cat_jp": "6. 安全衛生",
+  "type": "OX",
+  "q_jp": "グラインダの<ruby>砥石<rt>といし</rt></ruby>を<ruby>交換<rt>こうかん</rt></ruby>した<ruby>場合<rt>ばあい</rt></ruby>、すぐに<ruby>通常<rt>つうじょう</rt></ruby>の<ruby>作業<rt>さぎょう</rt></ruby>に<ruby>使用<rt>しよう</rt></ruby>してよい。",
+  "answer": "×",
+  "exp_jp": "<ruby>砥石<rt>といし</rt></ruby><ruby>交換<rt>こうかん</rt></ruby><ruby>後<rt>ご</rt></ruby>は、<ruby>破損<rt>はそん</rt></ruby>や<ruby>異常<rt>いじょう</rt></ruby>がないかを<ruby>確認<rt>かくにん</rt></ruby>するため、<ruby>必ず<rt>かならず</rt></ruby><ruby>試<rt>し</rt></ruby><ruby>運転<rt>うんてん</rt></ruby>を<ruby>行う<rt>おこなう</rt></ruby><ruby>必要<rt>ひつよう</rt></ruby>がある。",
+  "exp_vn": "Sau khi thay đá mài, bắt buộc phải chạy thử để kiểm tra xem có hư hỏng hay bất thường không."
+ },
+ {
+  "id": 48,
+  "cat_jp": "6. 安全衛生",
+  "type": "OX",
+  "q_jp": "<ruby>労働<rt>ろうどう</rt></ruby><ruby>災害<rt>さいがい</rt></ruby>を<ruby>防ぐ<rt>ふせぐ</rt></ruby>ためには、<ruby>作業<rt>さぎょう</rt></ruby><ruby>前<rt>まえ</rt></ruby>に<ruby>手順<rt>てじゅん</rt></ruby>や<ruby>周囲<rt>しゅうい</rt></ruby>の<ruby>安全<rt>あんぜん</rt></ruby>を<ruby>確認<rt>かくにん</rt></ruby>することが<ruby>重要<rt>じゅうよう</rt></ruby>である。",
+  "answer": "○",
+  "exp_jp": "<ruby>事前<rt>じぜん</rt></ruby><ruby>確認<rt>かくにん</rt></ruby>を<ruby>怠る<rt>おこたる</rt></ruby>と、<ruby>思わ<rt>おもわ</rt></ruby>ぬ<ruby>事故<rt>じこ</rt></ruby>につながるおそれがある。",
+  "exp_vn": "Nếu bỏ qua việc kiểm tra trước, có thể dẫn đến tai nạn ngoài ý muốn."
+ },
+ {
+  "id": 49,
+  "cat_jp": "6. 安全衛生",
+  "type": "OX",
+  "q_jp": "<ruby>電動<rt>でんどう</rt></ruby><ruby>工具<rt>こうぐ</rt></ruby>を<ruby>使用<rt>しよう</rt></ruby>する<ruby>前<rt>まえ</rt></ruby>には、コードや<ruby>本体<rt>ほんたい</rt></ruby>に<ruby>損傷<rt>そんしょう</rt></ruby>がないか<ruby>点検<rt>てんけん</rt></ruby>する<ruby>必要<rt>ひつよう</rt></ruby>はない。",
+  "answer": "×",
+  "exp_jp": "<ruby>損傷<rt>そんしょう</rt></ruby>があると<ruby>感電<rt>かんでん</rt></ruby>や<ruby>火災<rt>かさい</rt></ruby>の<ruby>原因<rt>げんいん</rt></ruby>となるため、<ruby>使用<rt>しよう</rt></ruby><ruby>前<rt>まえ</rt></ruby>の<ruby>点検<rt>てんけん</rt></ruby>は<ruby>必須<rt>ひっす</rt></ruby>である。",
+  "exp_vn": "Nếu có hư hỏng sẽ gây ra điện giật hoặc cháy nổ, nên việc kiểm tra trước khi sử dụng là bắt buộc."
+ },
+ {
+  "id": 50,
+  "cat_jp": "6. 安全衛生",
+  "type": "OX",
+  "q_jp": "<ruby>整理<rt>せいり</rt></ruby><ruby>整頓<rt>せいとん</rt></ruby>（5S）は、<ruby>作業<rt>さぎょう</rt></ruby>の<ruby>安全<rt>あんぜん</rt></ruby><ruby>性<rt>せい</rt></ruby><ruby>向上<rt>こうじょう</rt></ruby>にも<ruby>役立つ<rt>やくだつ</rt></ruby><ruby>活動<rt>かつどう</rt></ruby>である。",
+  "answer": "○",
+  "exp_jp": "<ruby>通路<rt>つうろ</rt></ruby>や<ruby>作業<rt>さぎょう</rt></ruby>スペースを<ruby>整理<rt>せいり</rt></ruby>することで、つまずきや<ruby>転倒<rt>てんとう</rt></ruby>などの<ruby>事故<rt>じこ</rt></ruby>を<ruby>防止<rt>ぼうし</rt></ruby>できる。",
+  "exp_vn": "Nhờ việc sắp xếp lối đi và không gian làm việc, có thể phòng tránh các tai nạn như vấp ngã."
+ }
 ];
+const CAT_RUBY = {
+ "1. 電気の基礎": "1.<ruby>電気<rt>でんき</rt></ruby>の<ruby>基礎<rt>きそ</rt></ruby>",
+ "2. 工具・器具": "2.<ruby>工具<rt>こうぐ</rt></ruby>・<ruby>器具<rt>きぐ</rt></ruby>",
+ "3. 材料": "3.<ruby>材料<rt>ざいりょう</rt></ruby>",
+ "4. 配線作業": "4.<ruby>配線<rt>はいせん</rt></ruby><ruby>作業<rt>さぎょう</rt></ruby>",
+ "5. 盤の構成機器": "5.<ruby>盤<rt>ばん</rt></ruby>の<ruby>構成<rt>こうせい</rt></ruby><ruby>機器<rt>きき</rt></ruby>",
+ "6. 安全衛生": "6.<ruby>安全<rt>あんぜん</rt></ruby><ruby>衛生<rt>えいせい</rt></ruby>"
+};
 const WEBAPP_URL = "https://script.google.com/macros/s/AKfycby5HJ3XenN_K581UPxIc7vc39wBBhnge4ZMo7RKSEQbj2qXydnqqYV-LKokliVldCLz/exec";
 
 const CATS = [...new Set(QUESTIONS.map(q=>q.cat_jp))];
@@ -208,28 +629,26 @@ function renderStart(){
   state = {pool:[], idx:0, score:0, streak:0, bestStreak:0, answered:false, catLabel:"", company:FIXED_COMPANY, name: state.name || ""};
   const card = document.getElementById("card");
   let catButtons = CATS.map((c,i)=>{
-    const vn = QUESTIONS.find(q=>q.cat_jp===c).cat_vn;
     const color = CAT_COLORS[i % CAT_COLORS.length];
-    return `<button class="cat-btn" style="background:${color}" data-cat="${c}">${c}<small>${vn}</small></button>`;
+    return `<button class="cat-btn" style="background:${color}" data-cat="${c}">${CAT_RUBY[c] || c}</button>`;
   }).join("");
 
   const companyField = FIXED_COMPANY
-    ? `<div class="field-group"><label>会社名 / Công ty</label><div class="company-fixed">🏢 ${FIXED_COMPANY}</div></div>`
-    : `<div class="field-group"><label>会社名 / Tên công ty</label><input id="companyInput" type="text" placeholder="例: 株式会社〇〇" value="${state.company||''}"></div>`;
+    ? `<div class="field-group"><label><ruby>会社名<rt>かいしゃめい</rt></ruby></label><div class="company-fixed">🏢 ${FIXED_COMPANY}</div></div>`
+    : `<div class="field-group"><label><ruby>会社名<rt>かいしゃめい</rt></ruby></label><input id="companyInput" type="text" placeholder="例: 株式会社〇〇" value="${state.company||''}"></div>`;
 
   card.innerHTML = `
     <div class="start-screen">
-      <h2>🎮 挑戦する分野を選ぼう！</h2>
-      <p style="color:#6a5acd; font-style:italic; margin-top:-6px;">Chọn chủ đề bạn muốn thử thách!</p>
-      <div class="badge-note">📋 全50問・すべて○×形式（実際の学科試験と同じ形式）／ 50 câu, toàn bộ dạng Đúng/Sai (giống hình thức đề thi thật)</div>
+      <h2>🎮 <ruby>挑戦<rt>ちょうせん</rt></ruby>する<ruby>分野<rt>ぶんや</rt></ruby>を<ruby>選<rt>えら</rt></ruby>ぼう！</h2>
+      <div class="badge-note">📋 <ruby>全<rt>ぜん</rt></ruby>50<ruby>問<rt>もん</rt></ruby>・すべて○×<ruby>形式<rt>けいしき</rt></ruby>（<ruby>実際<rt>じっさい</rt></ruby>の<ruby>学科試験<rt>がっかしけん</rt></ruby>と<ruby>同<rt>おな</rt></ruby>じ<ruby>形式<rt>けいしき</rt></ruby>）</div>
       ${companyField}
       <div class="field-group">
-        <label>お名前 / Họ tên</label>
+        <label>お<ruby>名前<rt>なまえ</rt></ruby></label>
         <input id="nameInput" type="text" placeholder="例: グエン・バン・A" value="${state.name||''}">
       </div>
       <div class="hint" id="hintMsg"></div>
       <div class="cat-grid">
-        <button class="cat-btn all" data-cat="ALL">🌟 全部まとめて挑戦！<small>Thử thách tất cả!</small></button>
+        <button class="cat-btn all" data-cat="ALL">🌟 <ruby>全部<rt>ぜんぶ</rt></ruby>まとめて<ruby>挑戦<rt>ちょうせん</rt></ruby>！</button>
         ${catButtons}
       </div>
     </div>
@@ -239,7 +658,7 @@ function renderStart(){
       const name = document.getElementById("nameInput").value.trim();
       const company = FIXED_COMPANY || (document.getElementById("companyInput") ? document.getElementById("companyInput").value.trim() : "");
       if(!name || !company){
-        document.getElementById("hintMsg").textContent = "会社名とお名前を入力してください / Vui lòng nhập tên công ty và họ tên";
+        document.getElementById("hintMsg").textContent = "会社名とお名前を入力してください";
         return;
       }
       state.name = name;
@@ -256,7 +675,7 @@ function startQuiz(cat){
   state.score = 0;
   state.streak = 0;
   state.bestStreak = 0;
-  state.catLabel = cat === "ALL" ? "全分野 / Tất cả chủ đề" : cat;
+  state.catLabel = cat === "ALL" ? "全分野" : cat;
   renderQuestion();
 }
 
@@ -268,7 +687,7 @@ function renderProgress(){
       <div class="progress-bar"><div class="progress-fill" style="width:${pct}%"></div></div>
       <div class="score-pill">⭐ ${state.score} / ${total}</div>
     </div>
-    <div class="streak">${state.streak>=2 ? "🔥 "+state.streak+" 連続正解！ Chuỗi đúng "+state.streak+" câu!" : ""}</div>
+    <div class="streak">${state.streak>=2 ? "🔥 "+state.streak+" <ruby>連続正解<rt>れんぞくせいかい</rt></ruby>！" : ""}</div>
   `;
 }
 
@@ -285,7 +704,7 @@ function renderQuestion(){
     body = `<div class="choices">` + q.choices.map((c,i)=>`
       <button class="choice-btn" data-val="${c.jp.replace(/"/g,'&quot;')}">
         <span class="badge">${labels[i]}</span>
-        <span class="txt"><span class="jp">${c.jp}</span><span class="vn">${c.vn}</span></span>
+        <span>${c.jp}</span>
       </button>
     `).join("") + `</div>`;
   }
@@ -293,8 +712,8 @@ function renderQuestion(){
   card.innerHTML = `
     ${renderProgress()}
     <div class="cat-tag">${q.cat_jp}</div>
+    ${q.img ? `<div class="q-img">${q.img}</div>` : ""}
     <div class="question-jp">Q${state.idx+1}. ${q.q_jp}</div>
-    <div class="question-vn">${q.q_vn}</div>
     ${body}
     <div id="feedback-area"></div>
   `;
@@ -325,11 +744,11 @@ function handleAnswer(btn, q, allBtns){
   }
 
   const fbBox = document.getElementById("feedback-area");
-  const praises = ["すごい！🎉","やった！✨","正解だよ！👏","さすが！💪","ナイス！🌟"];
-  const encourages = ["だいじょうぶ！次はできるよ😊","おしい！💡","気にしないで、続けよう！🙌","一緒に頑張ろう！🌈"];
+  const praises = ["すごい！🎉","やった！✨","<ruby>正解<rt>せいかい</rt></ruby>だよ！👏","さすが！💪","ナイス！🌟"];
+  const encourages = ["だいじょうぶ！<ruby>次<rt>つぎ</rt></ruby>はできるよ😊","おしい！💡","<ruby>気<rt>き</rt></ruby>にしないで、<ruby>続<rt>つづ</rt></ruby>けよう！🙌","<ruby>一緒<rt>いっしょ</rt></ruby>に<ruby>頑張<rt>がんば</rt></ruby>ろう！🌈"];
   const title = isCorrect
-    ? praises[Math.floor(Math.random()*praises.length)] + " 正解 / Chính xác!"
-    : encourages[Math.floor(Math.random()*encourages.length)] + " 不正解 / Chưa đúng";
+    ? praises[Math.floor(Math.random()*praises.length)] + " <ruby>正解<rt>せいかい</rt></ruby>！"
+    : encourages[Math.floor(Math.random()*encourages.length)] + " <ruby>不正解<rt>ふせいかい</rt></ruby>";
 
   fbBox.innerHTML = `
     <div class="feedback ${isCorrect?'correct':'wrong'}">
@@ -337,7 +756,7 @@ function handleAnswer(btn, q, allBtns){
       <div class="exp-jp">📘 ${q.exp_jp}</div>
       <div class="exp-vn">📗 ${q.exp_vn}</div>
     </div>
-    <button class="next-btn" id="nextBtn">${state.idx+1 < state.pool.length ? "次の問題へ ▶ Câu tiếp theo" : "結果を見る 🏆 Xem kết quả"}</button>
+    <button class="next-btn" id="nextBtn">${state.idx+1 < state.pool.length ? "<ruby>次<rt>つぎ</rt></ruby>の<ruby>問題<rt>もんだい</rt></ruby>へ ▶" : "<ruby>結果<rt>けっか</rt></ruby>を<ruby>見<rt>み</rt></ruby>る 🏆"}</button>
   `;
   document.getElementById("nextBtn").onclick = () => {
     state.idx++;
@@ -367,17 +786,17 @@ function sendResult(total, pct){
 function renderResult(){
   const total = state.pool.length;
   const pct = Math.round((state.score/total)*100);
-  let emoji, msgJp, msgVn, stars;
+  let emoji, msgJp, stars;
   if(pct === 100){
-    emoji="🏆👑"; msgJp="満点！すばらしい！本当の合格レベルです！"; msgVn="Điểm tuyệt đối! Tuyệt vời! Bạn đã đạt trình độ đậu thật sự!"; stars="★★★★★";
+    emoji="🏆👑"; msgJp="満点！すばらしい！本当の合格レベルです！"; stars="★★★★★";
   } else if(pct >= 80){
-    emoji="🎉🌟"; msgJp="とてもよくできました！この調子で頑張ろう！"; msgVn="Làm rất tốt! Hãy tiếp tục cố gắng như vậy!"; stars="★★★★☆";
+    emoji="🎉🌟"; msgJp="とてもよくできました！この調子で頑張ろう！"; stars="★★★★☆";
   } else if(pct >= 60){
-    emoji="😊👍"; msgJp="いい感じ！もう少し復習すればバッチリ！"; msgVn="Khá tốt! Ôn thêm một chút nữa là hoàn hảo!"; stars="★★★☆☆";
+    emoji="😊👍"; msgJp="いい感じ！もう少し復習すればバッチリ！"; stars="★★★☆☆";
   } else if(pct >= 40){
-    emoji="💪🙂"; msgJp="よく挑戦したね！もう一度やってみよう！"; msgVn="Bạn đã cố gắng rồi! Hãy thử lại lần nữa nhé!"; stars="★★☆☆☆";
+    emoji="💪🙂"; msgJp="よく挑戦したね！もう一度やってみよう！"; stars="★★☆☆☆";
   } else {
-    emoji="🌱😉"; msgJp="だいじょうぶ！練習すればきっとできる！"; msgVn="Không sao cả! Luyện tập nhiều sẽ làm được thôi!"; stars="★☆☆☆☆";
+    emoji="🌱😉"; msgJp="だいじょうぶ！練習すればきっとできる！"; stars="★☆☆☆☆";
   }
 
   const card = document.getElementById("card");
@@ -386,20 +805,19 @@ function renderResult(){
       <div class="cat-tag">${state.company} ／ ${state.name}</div>
       <div class="cat-tag" style="background:var(--purple)">${state.catLabel}</div>
       <div class="result-emoji">${emoji}</div>
-      <div class="result-score">${state.score} / ${total} 問正解 (${pct}%)</div>
+      <div class="result-score">${state.score} / ${total} <ruby>問正解<rt>もんせいかい</rt></ruby> (${pct}%)</div>
       <div class="stars">${stars}</div>
       <div class="result-msg">${msgJp}</div>
-      <div class="result-msg-vn">${msgVn}</div>
-      <div style="margin-top:6px; color:#e85d04; font-weight:bold;">🔥 最高連続正解 / Chuỗi đúng liên tiếp cao nhất: ${state.bestStreak}</div>
-      <div class="save-status" id="saveStatus">📤 成績を保存しています… / Đang lưu kết quả…</div>
+      <div style="margin-top:6px; color:#e85d04; font-weight:bold;">🔥 <ruby>最高連続正解<rt>さいこうれんぞくせいかい</rt></ruby>: ${state.bestStreak}</div>
+      <div class="save-status" id="saveStatus">📤 成績を保存しています…</div>
       <div class="retry-btns">
-        <button class="again" id="retryBtn">🔁 もう一度 / Làm lại</button>
-        <button class="home" id="homeBtn">🏠 分野選択に戻る / Về chọn chủ đề</button>
+        <button class="again" id="retryBtn">🔁 もう<ruby>一度<rt>いちど</rt></ruby></button>
+        <button class="home" id="homeBtn">🏠 <ruby>分野選択<rt>ぶんやせんたく</rt></ruby>に<ruby>戻<rt>もど</rt></ruby>る</button>
       </div>
     </div>
   `;
   document.getElementById("retryBtn").onclick = () => {
-    const cat = state.catLabel.startsWith("全分野") ? "ALL" : state.catLabel;
+    const cat = state.catLabel === "全分野" ? "ALL" : state.catLabel;
     startQuiz(cat);
   };
   document.getElementById("homeBtn").onclick = renderStart;
@@ -407,7 +825,7 @@ function renderResult(){
   sendResult(total, pct).then(ok=>{
     const el = document.getElementById("saveStatus");
     if(!el) return;
-    el.textContent = "✅ 成績を保存しました / Đã lưu kết quả thành công";
+    el.textContent = "✅ 成績を保存しました";
     el.classList.add("ok");
   });
 
